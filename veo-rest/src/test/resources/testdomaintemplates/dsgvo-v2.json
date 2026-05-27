@@ -3009,6 +3009,336 @@
             "elementType": "process",
             "customAspect": "process_opinionDPO",
             "attribute": "process_opinionDPO_consultationConducted"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "scope",
+            "customAspect": "scope_tomAssessment",
+            "attribute": "scope_tomAssessment_comment"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "scope",
+            "customAspect": "scope_tomAssessment",
+            "attribute": "scope_tomAssessment_certification"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "scope",
+            "customAspect": "scope_tomAssessment",
+            "attribute": "scope_tomAssessment_securityConcept"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "scope",
+            "customAspect": "scope_tomAssessment",
+            "attribute": "scope_tomAssessment_overallAssessment"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "scope",
+            "customAspect": "scope_tomAssessment",
+            "attribute": "scope_tomAssessment_certificationStandard"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "document",
+            "customAspect": "document_contract",
+            "attribute": "document_contract_type"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "document",
+            "customAspect": "document_contract",
+            "attribute": "document_contract_location"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "document",
+            "customAspect": "document_contract",
+            "attribute": "document_contract_description"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "document",
+            "customAspect": "document_contract",
+            "attribute": "document_contract_thirdCountry"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "document",
+            "customAspect": "document_contract",
+            "attribute": "document_contract_subcontractor"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "process",
+            "customAspect": "process_PIADPO",
+            "attribute": "process_PIADPO_advice"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "process",
+            "customAspect": "process_PIADPO",
+            "attribute": "process_PIADPO_comment"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "process",
+            "customAspect": "process_PIADPO",
+            "attribute": "process_PIADPO_document"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "process",
+            "customAspect": "process_PIAResult",
+            "attribute": "process_PIAResult_risk"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "process",
+            "customAspect": "process_PIAResult",
+            "attribute": "process_PIAResult_comment"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "process",
+            "customAspect": "process_PIAResult",
+            "attribute": "process_PIAResult_consultationDate"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "process",
+            "customAspect": "process_PIAResult",
+            "attribute": "process_PIAResult_consultationResult"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "process",
+            "customAspect": "process_PIAResult",
+            "attribute": "process_PIAResult_consultationDokument"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "process",
+            "customAspect": "process_PIAResult",
+            "attribute": "process_PIAResult_consultationRequired"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "process",
+            "customAspect": "process_PIAResult",
+            "attribute": "process_PIAResult_consultationConducted"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "process",
+            "customAspect": "process_PIAResult",
+            "attribute": "process_PIAResult_consultationJustification"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "process",
+            "customAspect": "process_PIADetails",
+            "attribute": "process_PIADetails_date"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "process",
+            "customAspect": "process_PIADetails",
+            "attribute": "process_PIADetails_reason"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "process",
+            "customAspect": "process_opinionDPO",
+            "attribute": "process_opinionDPO_consultationComment"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "process",
+            "customAspect": "process_PIAAssessment",
+            "attribute": "process_PIAAssessment_rules"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "process",
+            "customAspect": "process_PIAAssessment",
+            "attribute": "process_PIAAssessment_necessity"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "process",
+            "customAspect": "process_PIAAssessment",
+            "attribute": "process_PIAAssessment_rulesExisting"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "process",
+            "customAspect": "process_PIADescription",
+            "attribute": "process_PIADescription_dataType"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "process",
+            "customAspect": "process_PIADescription",
+            "attribute": "process_PIADescription_legalBasis"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "process",
+            "customAspect": "process_PIADescription",
+            "attribute": "process_PIADescription_testObject"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "process",
+            "customAspect": "process_PIADescription",
+            "attribute": "process_PIADescription_dataTransfer"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "process",
+            "customAspect": "process_PIADescription",
+            "attribute": "process_PIADescription_affectedPersons"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "process",
+            "customAspect": "process_PIADescription",
+            "attribute": "process_PIADescription_deletionPeriods"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "process",
+            "customAspect": "process_PIADescription",
+            "attribute": "process_PIADescription_intendedPurpose"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "process",
+            "customAspect": "process_PIADescription",
+            "attribute": "process_PIADescription_dataTypeAdditions"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "process",
+            "customAspect": "process_PIADescription",
+            "attribute": "process_PIADescription_accessAuthorisation"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "process",
+            "customAspect": "process_PIADescription",
+            "attribute": "process_PIADescription_applicationsSystems"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "process",
+            "customAspect": "process_PIADescription",
+            "attribute": "process_PIADescription_legalBasisAdditions"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "process",
+            "customAspect": "process_PIADescription",
+            "attribute": "process_PIADescription_dataTransferAdditions"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "process",
+            "customAspect": "process_PIADescription",
+            "attribute": "process_PIADescription_informationObligations"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "process",
+            "customAspect": "process_PIADescription",
+            "attribute": "process_PIADescription_affectedPersonsAdditions"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "process",
+            "customAspect": "process_PIADescription",
+            "attribute": "process_PIADescription_deletionPeriodsAdditions"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "process",
+            "customAspect": "process_PIADescription",
+            "attribute": "process_PIADescription_intendedPurposeAdditions"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "process",
+            "customAspect": "process_PIADescription",
+            "attribute": "process_PIADescription_accessAuthorisationAdditions"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "process",
+            "customAspect": "process_PIADescription",
+            "attribute": "process_PIADescription_informationObligationsAdditions"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "process",
+            "customAspect": "process_PIAInvolvement",
+            "attribute": "process_PIAInvolvement_stakeholder"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "process",
+            "customAspect": "process_PIAInvolvement",
+            "attribute": "process_PIAInvolvement_stakeholderPOV"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "process",
+            "customAspect": "process_PIAInvolvement",
+            "attribute": "process_PIAInvolvement_affectedPersons"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "process",
+            "customAspect": "process_PIAInvolvement",
+            "attribute": "process_PIAInvolvement_affectedPersonsPOV"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "process",
+            "customAspect": "process_PIAInvolvement",
+            "attribute": "process_PIAInvolvement_stakeholderComment"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "process",
+            "customAspect": "process_PIAInvolvement",
+            "attribute": "process_PIAInvolvement_stakeholderDocument"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "process",
+            "customAspect": "process_PIAInvolvement",
+            "attribute": "process_PIAInvolvement_affectedPersonsComment"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "process",
+            "customAspect": "process_PIAInvolvement",
+            "attribute": "process_PIAInvolvement_affectedPersonsDocument"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "process",
+            "customAspect": "process_PIAInvolvement",
+            "attribute": "process_PIAInvolvement_stakeholderParticipation"
+          },
+          {
+            "type": "customAspectAttribute",
+            "elementType": "process",
+            "customAspect": "process_privacyImpactAssessment",
+            "attribute": "process_privacyImpactAssessment_listed"
           }
         ],
         "newDefinitions": []

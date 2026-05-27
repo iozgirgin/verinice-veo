@@ -31,7 +31,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import org.veo.core.entity.Domain;
-import org.veo.core.entity.DomainTemplate;
+import org.veo.core.entity.DomainBase;
 import org.veo.core.entity.Element;
 import org.veo.core.entity.ElementType;
 import org.veo.core.entity.condition.VeoExpression;
@@ -83,12 +83,12 @@ public interface MigrationTransformDefinition {
             });
   }
 
-  default void validate(Domain domain, DomainTemplate domainTemplate) {
-    VeoType expectedType = target().getValueType(domain);
+  default void validate(DomainBase newMajor, DomainBase oldMajor) {
+    VeoType expectedType = target().getValueType(newMajor);
     try {
-      migrationExpression().selfValidate(domainTemplate, target().elementType());
+      migrationExpression().selfValidate(oldMajor, target().elementType());
       migrationExpression()
-          .getValueType(domainTemplate, target().elementType())
+          .getValueType(oldMajor, target().elementType())
           .mustBeIncludedIn(expectedType, "invalid migrationExpression");
     } catch (Exception e) {
       throw new IllegalArgumentException(

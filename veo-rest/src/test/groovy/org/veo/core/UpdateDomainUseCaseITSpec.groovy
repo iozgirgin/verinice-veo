@@ -90,8 +90,8 @@ class UpdateDomainUseCaseITSpec extends VeoSpringSpec {
 
     def setup() {
         createTestDomainTemplate(DSGVO_DOMAINTEMPLATE_UUID)
-        createTestDomainTemplate(DSGVO_DOMAINTEMPLATE_V2_UUID)
         executeInTransaction {
+            createTestDomainTemplate(DSGVO_DOMAINTEMPLATE_V2_UUID)
             client = createTestClient()
             dsgvoDomain = createTestDomain(client, DSGVO_DOMAINTEMPLATE_UUID)
             dsgvoDomain.riskDefinitions.xyz = createRiskDefinition("xyz")

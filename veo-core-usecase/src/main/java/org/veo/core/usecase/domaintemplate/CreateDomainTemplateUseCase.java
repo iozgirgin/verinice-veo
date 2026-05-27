@@ -23,13 +23,11 @@ import jakarta.validation.Valid;
 
 import org.veo.core.UserAccessRights;
 import org.veo.core.entity.DomainTemplate;
-import org.veo.core.entity.Profile;
 import org.veo.core.entity.exception.EntityAlreadyExistsException;
 import org.veo.core.entity.state.DomainBaseState;
 import org.veo.core.repository.DomainTemplateRepository;
 import org.veo.core.usecase.TransactionalUseCase;
 import org.veo.core.usecase.UseCase;
-import org.veo.core.usecase.base.TemplateItemValidator;
 import org.veo.core.usecase.service.DomainStateMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -50,17 +48,17 @@ public class CreateDomainTemplateUseCase
     if (domainTemplateRepository.exists(domainTemplate.getId())) {
       throw new EntityAlreadyExistsException(domainTemplate);
     }
+    var major = domainTemplate.getTemplateVersion().majorVersion();
 
-    DomainTemplateValidator.validateDomainTemplate(domainTemplate);
-
-    domainTemplate.getCatalogItems().forEach(TemplateItemValidator::validate);
-    domainTemplate.getProfiles().stream()
-        .flatMap((Profile profile) -> profile.getItems().stream())
-        .forEach(TemplateItemValidator::validate);
-
-    domainTemplate = domainTemplateRepository.save(domainTemplate);
-
-    return new OutputData(domainTemplate);
+    DomainTemplateValidator.validateDomainTemplate(
+        domainTemplate,
+        domainTemplateRepository
+            .findLatestByMajor(domainTemplate.getName(), major + 1)
+            .orElse(null),
+        domainTemplateRepository
+            .findLatestByMajor(domainTemplate.getName(), major - 1)
+            .orElse(null));
+    return new OutputData(domainTemplateRepository.save(domainTemplate));
   }
 
   @Override

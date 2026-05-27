@@ -21,15 +21,18 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
-import org.veo.core.entity.Domain;
+import javax.annotation.Nullable;
+
+import org.veo.core.entity.DomainBase;
 import org.veo.core.entity.DomainTemplate;
 import org.veo.core.entity.exception.UnprocessableDataException;
 
-public record DomainMigrationDefinition(@NotNull List<DomainMigrationStep> migrations) {
+public record DomainMigrationDefinition(@NotNull List<@Valid DomainMigrationStep> migrations) {
 
-  public void validate(@NotNull Domain domain, @NotNull DomainTemplate domainTemplate) {
+  public void validate(@NotNull DomainBase newMajor, @Nullable DomainTemplate oldMajor) {
     Set<String> ids = HashSet.newHashSet(migrations().size());
     migrations()
         .forEach(
@@ -46,17 +49,19 @@ public record DomainMigrationDefinition(@NotNull List<DomainMigrationStep> migra
                 throw new UnprocessableDataException(
                     "Interactive step %s does not support new definitions.".formatted(step.id()));
               }
-              try {
-                step.newDefinitions().forEach(nd -> nd.validate(domain, domainTemplate));
-              } catch (IllegalArgumentException e) {
-                throw new UnprocessableDataException(
-                    "Invalid newDefinition '%s'. %s".formatted(step.id(), e.getMessage()));
-              }
-              try {
-                step.oldDefinitions().forEach(od -> od.validate(domainTemplate));
-              } catch (IllegalArgumentException e) {
-                throw new UnprocessableDataException(
-                    "Invalid oldDefinition '%s'. %s".formatted(step.id(), e.getMessage()));
+              if (oldMajor != null) {
+                try {
+                  step.newDefinitions().forEach(nd -> nd.validate(newMajor, oldMajor));
+                } catch (IllegalArgumentException e) {
+                  throw new UnprocessableDataException(
+                      "Invalid newDefinition '%s'. %s".formatted(step.id(), e.getMessage()));
+                }
+                try {
+                  step.oldDefinitions().forEach(od -> od.validate(oldMajor));
+                } catch (IllegalArgumentException e) {
+                  throw new UnprocessableDataException(
+                      "Invalid oldDefinition '%s'. %s".formatted(step.id(), e.getMessage()));
+                }
               }
             });
   }

@@ -17,13 +17,19 @@
  */
 package org.veo.core.usecase;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import jakarta.validation.constraints.NotNull;
+
+import javax.annotation.Nullable;
+
 import org.veo.core.entity.BreakingChange;
 import org.veo.core.entity.Domain;
+import org.veo.core.entity.DomainBase;
 import org.veo.core.entity.DomainTemplate;
 import org.veo.core.entity.ElementType;
 import org.veo.core.entity.exception.UnprocessableDataException;
@@ -59,17 +65,14 @@ public class DomainChangeService {
     var newBreakingChanges =
         DomainDiff.determineBreakingChanges(domain, domain.getDomainTemplate());
     if (!newBreakingChanges.isEmpty()) {
-      validate(domain, domain.getDomainTemplate(), newBreakingChanges);
+      validateMigrationDefinition(domain, domain.getDomainTemplate(), newBreakingChanges);
       return new DomainChangeEvaluation(true);
     }
     var previousMajor = domain.getTemplateVersion().majorVersion() - 1;
     var previousMajorTemplate =
         domainTemplateRepository.findLatestByMajor(domain.getName(), previousMajor).orElse(null);
     if (previousMajorTemplate != null) {
-      validate(
-          domain,
-          previousMajorTemplate,
-          DomainDiff.determineBreakingChanges(domain, previousMajorTemplate));
+      validateMigrationDefinition(domain, previousMajorTemplate);
     } else if (!domain.getDomainMigrationDefinition().migrations().isEmpty()) {
       throw new UnprocessableDataException(
           "Migrations must be empty, because no breaking changes from domain template %s were detected and no previous major version template (%s.*.*) was found."
@@ -111,15 +114,27 @@ public class DomainChangeService {
             });
   }
 
-  private static void validate(
-      Domain domain, DomainTemplate templateToMigrateFrom, List<BreakingChange> breakingChanges) {
+  public static void validateMigrationDefinition(
+      @NotNull DomainBase newMajor, @Nullable DomainTemplate oldMajor) {
+    validateMigrationDefinition(
+        newMajor,
+        oldMajor,
+        oldMajor != null
+            ? DomainDiff.determineBreakingChanges(newMajor, oldMajor)
+            : Collections.emptyList());
+  }
+
+  private static void validateMigrationDefinition(
+      DomainBase newMajor,
+      @Nullable DomainTemplate oldMajor,
+      List<BreakingChange> breakingChanges) {
     try {
-      domain.getDomainMigrationDefinition().validate(domain, templateToMigrateFrom);
+      newMajor.getDomainMigrationDefinition().validate(newMajor, oldMajor);
       var unhandledChanges =
           breakingChanges.stream()
               .filter(
                   breakingChange ->
-                      domain.getDomainMigrationDefinition().migrations().stream()
+                      newMajor.getDomainMigrationDefinition().migrations().stream()
                           .noneMatch(m -> m.handles(breakingChange)))
               .toList();
       if (!unhandledChanges.isEmpty()) {
@@ -132,8 +147,10 @@ public class DomainChangeService {
       }
     } catch (UnprocessableDataException ex) {
       throw new UnprocessableDataException(
-          "Migration definition not suited to update from old domain template %s: %s"
-              .formatted(templateToMigrateFrom.getTemplateVersion(), ex.getMessage()));
+          oldMajor != null
+              ? "Migration definition not suited to update from old domain template %s: %s"
+                  .formatted(oldMajor.getTemplateVersion(), ex.getMessage())
+              : ex.getMessage());
     }
   }
 

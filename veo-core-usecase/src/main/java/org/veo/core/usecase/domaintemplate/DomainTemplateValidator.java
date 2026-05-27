@@ -17,21 +17,47 @@
  */
 package org.veo.core.usecase.domaintemplate;
 
+import javax.annotation.Nullable;
+
 import com.github.zafarkhaja.semver.Version;
 
 import org.veo.core.entity.DomainBase;
 import org.veo.core.entity.DomainTemplate;
+import org.veo.core.entity.Profile;
 import org.veo.core.entity.exception.UnprocessableDataException;
 import org.veo.core.entity.specification.ElementTypeDefinitionValidator;
+import org.veo.core.usecase.DomainChangeService;
+import org.veo.core.usecase.base.TemplateItemValidator;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 class DomainTemplateValidator {
-  static void validateDomainTemplate(DomainTemplate domainTemplate) {
+  static void validateDomainTemplate(
+      DomainTemplate domainTemplate,
+      @Nullable DomainTemplate next,
+      @Nullable DomainTemplate previous) {
     validateTranslations(domainTemplate);
+    validateCatalogAndProfiles(domainTemplate);
     validateVersion(domainTemplate.getTemplateVersion());
+    DomainChangeService.validateMigrationDefinition(domainTemplate, previous);
+    if (next != null) {
+      try {
+        DomainChangeService.validateMigrationDefinition(next, domainTemplate);
+      } catch (UnprocessableDataException e) {
+        throw new UnprocessableDataException(
+            "The next major version %s of the template is not compatible with given template: %s"
+                .formatted(next.getTemplateVersion(), e.getMessage()));
+      }
+    }
+  }
+
+  private static void validateCatalogAndProfiles(DomainTemplate domainTemplate) {
+    domainTemplate.getCatalogItems().forEach(TemplateItemValidator::validate);
+    domainTemplate.getProfiles().stream()
+        .flatMap((Profile profile) -> profile.getItems().stream())
+        .forEach(TemplateItemValidator::validate);
   }
 
   private static void validateTranslations(DomainBase domain) {

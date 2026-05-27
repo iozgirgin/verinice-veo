@@ -17,15 +17,22 @@
  */
 package org.veo.core.usecase.domaintemplate
 
+import com.github.zafarkhaja.semver.Version
+
 import org.veo.core.entity.DomainTemplate
 import org.veo.core.entity.ElementType
 import org.veo.core.entity.NameAbbreviationAndDescription
 import org.veo.core.entity.Translated
+import org.veo.core.entity.TranslatedText
 import org.veo.core.entity.TranslationException
 import org.veo.core.entity.definitions.CustomAspectDefinition
 import org.veo.core.entity.definitions.ElementTypeDefinition
 import org.veo.core.entity.definitions.SubTypeDefinition
 import org.veo.core.entity.definitions.attribute.BooleanAttributeDefinition
+import org.veo.core.entity.definitions.attribute.IntegerAttributeDefinition
+import org.veo.core.entity.domainmigration.CustomAspectMigrationTransformDefinition
+import org.veo.core.entity.domainmigration.DomainMigrationDefinition
+import org.veo.core.entity.domainmigration.DomainMigrationStep
 import org.veo.core.entity.exception.UnprocessableDataException
 import org.veo.core.usecase.UseCaseSpec
 
@@ -59,7 +66,7 @@ class ValidateDomainTemplateSpec extends UseCaseSpec {
         domaintemplate.getTranslations() >> translation
 
         when: "validate"
-        DomainTemplateValidator.validateDomainTemplate(domaintemplate)
+        DomainTemplateValidator.validateDomainTemplate(domaintemplate, null, null)
 
         then:
         UnprocessableDataException e = thrown()
@@ -79,10 +86,13 @@ class ValidateDomainTemplateSpec extends UseCaseSpec {
         domaintemplate.getId() >> id
         domaintemplate.getTemplateVersion()>> com.github.zafarkhaja.semver.Version.forIntegers(1)
         domaintemplate.getElementTypeDefinitions() >> []
+        domaintemplate.getCatalogItems() >> []
+        domaintemplate.getProfiles() >> []
         domaintemplate.getTranslations() >> COMPLETE_TRANSLATION
+        domaintemplate.domainMigrationDefinition >> new DomainMigrationDefinition([])
 
         when: "validate"
-        DomainTemplateValidator.validateDomainTemplate(domaintemplate)
+        DomainTemplateValidator.validateDomainTemplate(domaintemplate, null, null)
 
         then:
         noExceptionThrown()
@@ -93,6 +103,8 @@ class ValidateDomainTemplateSpec extends UseCaseSpec {
         def id = UUID.randomUUID()
         DomainTemplate domaintemplate = Mock()
         domaintemplate.getId() >> id
+        domaintemplate.getCatalogItems() >> []
+        domaintemplate.getProfiles() >> []
         domaintemplate.getTranslations() >> COMPLETE_TRANSLATION
 
         def ca = new CustomAspectDefinition()
@@ -110,7 +122,7 @@ class ValidateDomainTemplateSpec extends UseCaseSpec {
         domaintemplate.getElementTypeDefinitions() >> Set.of(testType)
 
         when: "validate"
-        DomainTemplateValidator.validateDomainTemplate(domaintemplate)
+        DomainTemplateValidator.validateDomainTemplate(domaintemplate, null, null)
 
         then:
         TranslationException e = thrown()
@@ -122,5 +134,59 @@ class ValidateDomainTemplateSpec extends UseCaseSpec {
         INCOMPLETE_TRANSLATION_MAP| [:] | "Issues were found in the translations: Language 'en': MISSING: asset_sub_plural, asset_sub_singular, asset_sub_status_one ; SUPERFLUOUS: some Value"
         SUPERFLUOUS_MAP| [:] | "Issues were found in the translations: Language 'en': SUPERFLUOUS: some Value"
         MINIMAL_TRANSLATION_MAP| ["test-attribute": new BooleanAttributeDefinition()] | "Issues were found in the translations: Language 'en': MISSING: test-attribute"
+    }
+
+    def "Report incomplete migrations"() {
+        given: "a valid template"
+        DomainTemplate domaintemplate = Mock() {
+            getId() >> UUID.randomUUID()
+            getTranslations() >> COMPLETE_TRANSLATION
+            getCatalogItems() >> []
+            getProfiles() >> []
+            getTemplateVersion() >> new Version(1, 0, 0)
+            getElementTypeDefinitions() >> Set.of(Mock(ElementTypeDefinition) {
+                getElementType() >> ElementType.ASSET
+                getSubTypes() >> [
+                    "sub": new SubTypeDefinition().tap {
+                        setSortKey(0)
+                        setStatuses(["one"])
+                    }]
+                getCustomAspects() >> [
+                    "testAspect": new CustomAspectDefinition().tap {
+                        setAttributeDefinitions(["test-attribute": new BooleanAttributeDefinition()])
+                    }]
+                getLinks() >> [:]
+                getTranslations() >> [(Locale.of("EN")): [
+                        "asset_sub_plural"    : "assets",
+                        "asset_sub_singular"  : "asset",
+                        "asset_sub_status_one": "one",
+                        "test-attribute"      : "a test"
+                    ]]
+            })
+            getDomainMigrationDefinition() >> new DomainMigrationDefinition(steps)
+        }
+
+        when: "validate"
+        DomainTemplateValidator.validateDomainTemplate(domaintemplate, null, null)
+
+        then:
+        UnprocessableDataException e = thrown()
+        e.message == errorMessage
+
+        where:
+        steps | errorMessage
+        [
+            new DomainMigrationStep("1",new TranslatedText([:]) ,[],null,false)
+        ] | "No description provided for step '1'."
+        [
+            new DomainMigrationStep("1",new TranslatedText(["en":[:]]) ,[],null,false),
+            new DomainMigrationStep("1",new TranslatedText(["en":[:]]) ,[],null,false)
+        ] | "Id '1' not unique."
+        [
+            new DomainMigrationStep("1",new TranslatedText(["en":[:]]) ,[],
+            [
+                new CustomAspectMigrationTransformDefinition(null,null)
+            ],true)
+        ] |"Interactive step 1 does not support new definitions."
     }
 }

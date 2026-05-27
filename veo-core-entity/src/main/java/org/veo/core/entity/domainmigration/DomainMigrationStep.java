@@ -20,6 +20,7 @@ package org.veo.core.entity.domainmigration;
 import java.util.Collections;
 import java.util.List;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -46,11 +47,11 @@ public record DomainMigrationStep(
         @NotNull
         TranslatedText description,
     @Schema(description = "A list of attributes in the old domain that this step handles") @NotNull
-        List<DomainSpecificValueLocation> oldDefinitions,
+        List<@Valid DomainSpecificValueLocation> oldDefinitions,
     @Schema(
             description =
                 "An optional list of attributes in the new domain that this step will create. If this is omitted, the values will not be transferred into the new domain.")
-        List<MigrationTransformDefinition> newDefinitions,
+        List<@Valid MigrationTransformDefinition> newDefinitions,
     @Schema(
             description = "Whether this migration step needs user interaction",
             defaultValue = "false")

@@ -148,7 +148,7 @@ class DomainTemplateControllerMvcITSpec extends VeoMvcSpec {
         client3.domains.size() == 0
 
         when: "creating the DSGVO_V2 domain for all clients with previous DSGVO"
-        createTestDomainTemplate(DSGVO_DOMAINTEMPLATE_V2_UUID)
+        executeInTransaction { createTestDomainTemplate(DSGVO_DOMAINTEMPLATE_V2_UUID) }
         post("/domain-templates/$DSGVO_DOMAINTEMPLATE_V2_UUID/createdomains?restrictToClientsWithExistingDomain=true", [:], HttpStatus.SC_NO_CONTENT)
         client1 = loadClientAndInitializeDomains(client1.id)
         client2 = loadClientAndInitializeDomains(client2.id)

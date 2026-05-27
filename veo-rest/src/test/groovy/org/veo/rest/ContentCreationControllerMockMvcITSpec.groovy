@@ -190,6 +190,148 @@ class ContentCreationControllerMockMvcITSpec extends ContentSpec {
     }
 
     @WithUserDetails("content-creator")
+    def "basic migration step validation is performed on domain template import"() {
+        given:
+        txTemplate.execute {
+            createTestDomainTemplate(TEST_DOMAIN_TEMPLATE_ID)
+        }
+        def newTemplate = parseJson(get("/content-creation/domain-templates/$TEST_DOMAIN_TEMPLATE_ID"))
+        newTemplate.templateVersion = "2.0.0"
+
+        when: "posting an empty migration step"
+        newTemplate.domainMigrationDefinition.migrations = [[:]]
+        post("/content-creation/domain-templates", newTemplate, 400)
+
+        then:
+        def ex = thrown(HandlerMethodValidationException)
+        with(ex.parameterValidationResults.first()  ) {
+            resolvableErrors*.field ==~ [
+                "domainMigrationDefinition.migrations[0].id",
+                "domainMigrationDefinition.migrations[0].description",
+                "domainMigrationDefinition.migrations[0].oldDefinitions",
+            ]
+            resolvableErrors*.defaultMessage =~ ["must not be null"]
+        }
+
+        when: "using an empty description"
+        newTemplate.domainMigrationDefinition.migrations = [
+            [
+                id: "dd",
+                description: [:],
+                oldDefinitions: [],
+            ]
+        ]
+        post("/content-creation/domain-templates", newTemplate, 422)
+
+        then:
+        ex = thrown(UnprocessableDataException)
+        ex.message == "Migration definition not suited to update from old domain template 1.0.0: No description provided for step 'dd'."
+
+        when: "duplicate IDs"
+        newTemplate.domainMigrationDefinition.migrations = [
+            [
+                id: "test",
+                description: ["en":"things change"],
+                oldDefinitions: [],
+            ]
+        ].repeat(2)
+        post("/content-creation/domain-templates", newTemplate, 422)
+
+        then:
+        ex = thrown(UnprocessableDataException)
+        ex.message == "Migration definition not suited to update from old domain template 1.0.0: Id 'test' not unique."
+
+        when: "using incomplete definitions"
+        newTemplate.domainMigrationDefinition.migrations = [
+            [
+                id: "test",
+                description: ["en":"things change"],
+                oldDefinitions: [
+                    [
+                        type: "customAspectAttribute",
+                    ]
+                ],
+                newDefinitions: [
+                    [
+                        type: "customAspectAttribute",
+                    ]
+                ]
+            ]
+        ]
+        post("/content-creation/domain-templates", newTemplate, 400)
+
+        then:
+        ex = thrown(HandlerMethodValidationException)
+        with(ex.parameterValidationResults.first()  ) {
+            resolvableErrors*.field ==~ [
+                "domainMigrationDefinition.migrations[0].oldDefinitions[0].elementType",
+                "domainMigrationDefinition.migrations[0].oldDefinitions[0].customAspect",
+                "domainMigrationDefinition.migrations[0].oldDefinitions[0].attribute",
+                "domainMigrationDefinition.migrations[0].newDefinitions[0].target.elementType",
+                "domainMigrationDefinition.migrations[0].newDefinitions[0].target.customAspect",
+                "domainMigrationDefinition.migrations[0].newDefinitions[0].target.attribute",
+                "domainMigrationDefinition.migrations[0].newDefinitions[0].migrationExpression",
+            ]
+            resolvableErrors*.defaultMessage =~ ["must not be null"]
+        }
+
+        when: "using new definitions for an interactive step"
+        newTemplate.domainMigrationDefinition.migrations = [
+            [
+                id: "interacter",
+                description: ["en":"things change"],
+                interactive: true,
+                oldDefinitions: [],
+                newDefinitions: [
+                    [
+                        type: "customAspectAttribute",
+                        elementType: "control",
+                        customAspect: "implementation",
+                        attribute: "explanation",
+                        migrationExpression: [
+                            type: "constant",
+                            value: "abc"
+                        ]
+                    ]
+                ]
+            ]
+        ]
+        post("/content-creation/domain-templates", newTemplate, 422)
+
+        then:
+        ex = thrown(UnprocessableDataException)
+        ex.message == "Migration definition not suited to update from old domain template 1.0.0: Interactive step interacter does not support new definitions."
+    }
+
+    @WithUserDetails("content-creator")
+    def "migration step compatibility with existing templates is checked on domain template import"() {
+        given: "an altered version of an existing template with a breaking change"
+        txTemplate.execute {
+            createTestDomainTemplate(TEST_DOMAIN_TEMPLATE_ID)
+        }
+        def newTemplate = parseJson(get("/content-creation/domain-templates/$TEST_DOMAIN_TEMPLATE_ID"))
+        newTemplate.elementTypeDefinitions.control.customAspects.implementation.attributeDefinitions.explanation = [
+            type: "boolean"
+        ]
+
+        when: "posting it as a followup version"
+        newTemplate.templateVersion = "2.0.0"
+        post("/content-creation/domain-templates", newTemplate, 422)
+
+        then:
+        def ex = thrown(UnprocessableDataException)
+        ex.message == "Migration definition not suited to update from old domain template 1.0.0: Missing migration steps: Modified attribute 'explanation' of custom aspect 'implementation' for type control"
+
+        when: "posting it as a predecessor version"
+        newTemplate.templateVersion = "0.1.0"
+        post("/content-creation/domain-templates", newTemplate, 422)
+
+        then:
+        ex = thrown(UnprocessableDataException)
+        ex.message == "The next major version 1.0.0 of the template is not compatible with given template: Migration definition not suited to update from old domain template 0.1.0: Missing migration steps: Modified attribute 'explanation' of custom aspect 'implementation' for type control"
+    }
+
+    @WithUserDetails("content-creator")
     def "export a domain template"() {
         given:
         createTestDomainTemplate(TEST_DOMAIN_TEMPLATE_ID)

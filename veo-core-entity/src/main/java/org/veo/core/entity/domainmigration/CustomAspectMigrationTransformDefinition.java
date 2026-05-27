@@ -17,6 +17,7 @@
  */
 package org.veo.core.entity.domainmigration;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
@@ -27,5 +28,5 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public record CustomAspectMigrationTransformDefinition(
-    @NotNull VeoExpression migrationExpression, @JsonUnwrapped CustomAspectAttribute target)
+    @NotNull VeoExpression migrationExpression, @JsonUnwrapped @Valid CustomAspectAttribute target)
     implements MigrationTransformDefinition {}

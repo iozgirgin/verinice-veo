@@ -26,6 +26,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import jakarta.validation.Valid;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -76,6 +78,7 @@ public class ExportDomainTemplateDto extends AbstractDomainTemplateDto
   private ControlImplementationConfiguration controlImplementationConfiguration =
       new ControlImplementationConfiguration();
 
+  @Valid
   private DomainMigrationDefinition domainMigrationDefinition =
       new DomainMigrationDefinition(Collections.emptyList());
 

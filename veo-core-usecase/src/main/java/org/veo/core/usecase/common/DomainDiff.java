@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.veo.core.entity.BreakingChange;
-import org.veo.core.entity.Domain;
+import org.veo.core.entity.DomainBase;
 import org.veo.core.entity.DomainTemplate;
 import org.veo.core.entity.ElementType;
 import org.veo.core.entity.definitions.CustomAspectDefinition;
@@ -38,11 +38,11 @@ import lombok.NoArgsConstructor;
 public class DomainDiff {
 
   public static List<BreakingChange> determineBreakingChanges(
-      Domain domain, DomainTemplate template) {
+      DomainBase newMajor, DomainTemplate oldMajor) {
     List<BreakingChange> result = new ArrayList<>();
-    for (ElementTypeDefinition etdTemplate : template.getElementTypeDefinitions()) {
+    for (ElementTypeDefinition etdTemplate : oldMajor.getElementTypeDefinitions()) {
       ElementType elementType = etdTemplate.getElementType();
-      ElementTypeDefinition etdDomain = domain.getElementTypeDefinition(elementType);
+      ElementTypeDefinition etdDomain = newMajor.getElementTypeDefinition(elementType);
       Map<String, CustomAspectDefinition> casDomain = etdDomain.getCustomAspects();
       for (Map.Entry<String, CustomAspectDefinition> e :
           etdTemplate.getCustomAspects().entrySet()) {
