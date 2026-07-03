@@ -1823,7 +1823,6 @@ class SwaggerSpec extends VeoSpringSpec {
             ]
             it.required ==~ [
                 'conditions',
-                'description'
             ]
         }
     }

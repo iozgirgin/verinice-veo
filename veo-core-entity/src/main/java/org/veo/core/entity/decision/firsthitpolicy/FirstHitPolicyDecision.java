@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
 import javax.annotation.Nullable;
@@ -65,6 +66,7 @@ public class FirstHitPolicyDecision extends Decision {
 
   @Schema(description = "Rules ordered by priority (descending)")
   @NotNull
+  @Valid
   private List<Rule> rules = new LinkedList<>();
 
   @Schema(

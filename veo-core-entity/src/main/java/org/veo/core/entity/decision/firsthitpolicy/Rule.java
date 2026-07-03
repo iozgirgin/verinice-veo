@@ -22,6 +22,8 @@ import java.util.List;
 
 import jakarta.validation.constraints.NotNull;
 
+import javax.annotation.Nullable;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.veo.core.entity.Domain;
@@ -54,7 +56,7 @@ public class Rule {
   private Boolean output;
 
   /** Translated human-readable texts. Key is ISO language code, value is text. */
-  @NotNull private TranslatedText description;
+  @Nullable private TranslatedText description;
 
   /** The rule only matches an element if any of these conditions match the element. */
   @JsonProperty @NotNull private final List<Condition> conditions = new ArrayList<>();
