@@ -283,37 +283,15 @@ class DecisionCreationRestTest extends VeoRestTest {
             name: [en: "B"],
             elementType: "document",
             elementSubType: "Article",
-            rules: [
-                [
-                    output: true,
-                    conditions: [
-                        [
-                            inputProvider : [
-                                type    : "decisionResultValue",
-                                decision: "a",
-                            ],
-                            inputMatcher: [type: "equals", comparisonValue: true]]
-                    ]
-                ]
-            ]
+            type: "expressive",
+            expression: [type: "decisionResultValue", decision: "a"]
         ], null, 201, CONTENT_CREATOR)
         put("/content-creation/domains/$domainId/decisions/c", [
             name: [en: "C"],
             elementType: "document",
             elementSubType: "Article",
-            rules: [
-                [
-                    output: true,
-                    conditions: [
-                        [
-                            inputProvider : [
-                                type    : "decisionResultValue",
-                                decision: "b",
-                            ],
-                            inputMatcher: [type: "equals",comparisonValue: true]]
-                    ]
-                ]
-            ]
+            type: "expressive",
+            expression: [type: "decisionResultValue", decision: "b"]
         ], null, 201, CONTENT_CREATOR)
 
         when:
@@ -336,19 +314,8 @@ class DecisionCreationRestTest extends VeoRestTest {
             name: [en: "A"],
             elementType: "document",
             elementSubType: "Article",
-            rules: [
-                [
-                    output: true,
-                    conditions: [
-                        [
-                            inputProvider : [
-                                type    : "decisionResultValue",
-                                decision: "c",
-                            ],
-                            inputMatcher: [type: "equals",comparisonValue: true]]
-                    ]
-                ]
-            ]
+            type: "expressive",
+            expression: [type: "decisionResultValue", decision: "c"]
         ], null, 422, CONTENT_CREATOR).body.message
 
         then:
