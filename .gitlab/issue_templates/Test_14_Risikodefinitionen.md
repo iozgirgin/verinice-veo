@@ -25,14 +25,10 @@ Es wird getestet im Custom-Test-Client auf Staging, **nicht** im Content-Creatio
 
 </details>
 
-# Findings
+# Abschlusskriterien
 
-<details><summary>Bearbeiten / Ansehen</summary>
+Für Testvorgänge gibt es keine Abnahme durch eine zweite Person. Bitte als Tester:in eigenmächtig alles abhaken und danach den Vorgang schließen:
 
-- [ ] Keine Findings
-
-- _Erstes Finding_
-- _Zweites Finding_
-- _Drittes Finding_
-
-</details>
+- [ ] Der Testplan wurde so weit wie möglich durchgeführt.
+- [ ] Es wurde für jedes Finding ein neuer Vorgang erstellt und mit diesem Vorgang hier verknüpft.
+- [ ] Falls Teile des Plans veraltet oder einfach falsch waren, wurde die Vorlage des Testplans korrigiert (das Entwicklungsteam kann hierbei helfen).
