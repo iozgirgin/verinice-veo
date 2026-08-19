@@ -1,23 +1,6 @@
 # Testbedingungen
 
-<details><summary>Bearbeiten / Ansehen</summary>
-
-## Umgebung(en)
-
-Empfohlen:
-
-- auf Staging in einem Client ohne Profile und Kataloge
-
-## Rolle(n)
-
-- Es soll immer als NICHT Content Creator getestet werden
-
-## Berechtigung(en)
-
-- [ ] Leseberechtigung
-- [ ] Schreibberechtigung
-
-</details>
+Es wird getestet im Custom-Test-Client auf Staging, **nicht** im Content-Creation-Client.
 
 # Testplan 14 Risikodefinitionen
 

@@ -1,26 +1,6 @@
 # Testbedingungen
 
-<details><summary>Bearbeiten / Ansehen</summary>
-
-## Umgebung(en)
-
-- [ ] DEV
-- [ ] STAGE
-- [ ] SANDBOX
-- [ ] PROD
-- [ ] ...
-
-## Sprache
-
-- [ ] DE
-- [ ] EN
-
-## Berechtigung(en)
-
-- [ ] Leseberechtigung
-- [ ] Schreibberechtigung
-
-</details>
+Es wird getestet im Vanilla-Test-Client auf Staging, **nicht** im Content-Creation-Client.
 
 # Testplan 04 Objektübersicht
 

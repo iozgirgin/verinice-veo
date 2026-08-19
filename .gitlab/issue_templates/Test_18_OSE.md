@@ -1,28 +1,6 @@
 # Testbedingungen
 
-<details><summary>Bearbeiten / Ansehen</summary>
-
-## Umgebung(en)
-
-- [ ] DEV
-- [ ] STAGE
-- [ ] SANDBOX
-- [ ] PROD
-- [ ] ...
-
-## Rolle(n)
-
-- [ ] Hauptnutzer
-- [ ] Nutzer
-- [ ] Content Creator
-- [ ] Account Manager
-
-## Berechtigung(en)
-
-- [ ] Leseberechtigung
-- [ ] Schreibberechtigung
-
-</details>
+TODO wir brauchen für Content-Creation-Tests noch einen Test-Client.
 
 # Testplan 18_OSE
 

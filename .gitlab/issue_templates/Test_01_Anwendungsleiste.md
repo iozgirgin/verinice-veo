@@ -1,28 +1,8 @@
 # Testbedingungen
 
-<details><summary>Bearbeiten / Ansehen</summary>
+Es wird getestet im Vanilla-Test-Client auf Staging, **nicht** im Content-Creation-Client.
 
-## Umgebung(en)
-
-- [ ] DEV
-- [ ] STAGE
-- [ ] SANDBOX
-- [ ] PROD
-- [ ] ...
-
-## Rolle(n)
-
-- [ ] Hauptnutzer
-- [ ] Nutzer
-- [ ] Content Creator
-- [ ] Account Manager
-
-## Berechtigung(en)
-
-- [ ] Leseberechtigung
-- [ ] Schreibberechtigung
-
-</details>
+Der Test muss als Hauptbenutzer:in (also Account-Manager) durchgeführt werden.
 
 # Testplan 01 Anwendungsleiste
 

@@ -1,28 +1,6 @@
 # Testbedingungen
 
-<details><summary>Bearbeiten / Ansehen</summary>
-
-## Umgebung(en)
-
-- [ ] DEV
-- [ ] STAGE
-- [ ] SANDBOX
-- [ ] PROD
-- [ ] ...
-
-## Rolle(n)
-
-- [ ] Hauptnutzer
-- [ ] Nutzer
-- [ ] Content Creator
-- [ ] Account Manager
-
-## Berechtigung(en)
-
-- [ ] Leseberechtigung
-- [ ] Schreibberechtigung
-
-</details>
+Es wird getestet in einem Testclient auf Staging, **nicht** im Content-Creation-Client.
 
 # Testplan 13 Reports
 
