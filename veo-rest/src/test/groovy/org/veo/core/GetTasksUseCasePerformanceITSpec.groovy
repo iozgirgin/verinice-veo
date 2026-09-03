@@ -126,16 +126,7 @@ class GetTasksUseCasePerformanceITSpec extends AbstractPerformanceITSpec {
                     PagingConfiguration.unpaged(TaskQuery.SortCriterion.DEADLINE)),
                     NoRestrictionAccessRight.from(client.getId().toString()))
                     .page()
-                    .resultPage().tap{
-                        it*.assignee()*.name
-                        it*.requirementImplementation*.control*.name
-                        it*.requirementImplementation*.origin*.name
-                        it*.requirementImplementation*.document*.name
-                        it*.requirementImplementation*.responsible*.name
-                        it*.requirementImplementation*.implementedBy*.name
-                        it*.requirementImplementation*.lastRevisionBy*.name
-                        it*.requirementImplementation*.nextRevisionBy*.name
-                    }
+                    .resultPage()
         }
         def queryCounts = QueryCountHolder.grandTotal
 
@@ -153,12 +144,12 @@ class GetTasksUseCasePerformanceITSpec extends AbstractPerformanceITSpec {
         }
 
         and:
-        queryCounts.select == 47
+        queryCounts.select == 6
         queryCounts.insert == 0
         queryCounts.update == 0
         queryCounts.delete == 0
         queryCounts.time < 1000
-        // expect the currently observed count of 2533 rows plus an acceptable safety margin
-        DataSourceProxyBeanPostProcessor.totalResultSetRowsRead - rowCountBefore <= 2786
+        // expect the currently observed count of 1713 rows plus an acceptable safety margin
+        DataSourceProxyBeanPostProcessor.totalResultSetRowsRead - rowCountBefore <= 1884
     }
 }

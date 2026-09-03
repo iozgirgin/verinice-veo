@@ -67,7 +67,7 @@ public class RequirementImplementationQueryImpl implements RequirementImplementa
 
   private void fullyLoadItems(List<Long> dbIds) {
     ListUtils.partition(dbIds, VeoConstants.DB_QUERY_CHUNK_SIZE)
-        .forEach(repo::findAllByDbIdsWithControls);
+        .forEach(repo::findAllByDbIdsWithAllRelations);
   }
 
   @Override

@@ -48,9 +48,14 @@ public interface RequirementImplementationDataRepository
       """
                       select distinct ri from requirement_implementation ri
                       join fetch ri.control
+                      join fetch ri.origin
+                      left join fetch ri.document
+                      left join fetch ri.implementedBy
+                      left join fetch ri.nextRevisionBy
+                      left join fetch ri.lastRevisionBy
                       where ri.dbId in ?1
                      """)
-  Set<RequirementImplementationData> findAllByDbIdsWithControls(Iterable<Long> uuids);
+  Set<RequirementImplementationData> findAllByDbIdsWithAllRelations(Iterable<Long> ids);
 
   @Query(
       """
