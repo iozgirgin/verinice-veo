@@ -1,93 +1,30 @@
-# Content-Development-Release-and-Deployment
+# Content deployment
 
-Deploy VEO content as described below.
+Publish the domain INSERT_DOMAIN_NAME_HERE on INSERT_PROD_OR_JUST_SANDBOX_HERE.
 
-## Abbreviations used:
+# Implementation notes
 
--  DT: Domain Template
--  FTB: Form Template Bundle
--  CC: Content Creator
--  DEV: Developer
--  OPS: Operations Team
-
-# Notes
-_Any additional side notes / remarks if required._
-
-# Action Items
-
-Complete this work instruction by filling out all fields when creating the issue. Mark as `?` if unknown. Change defaults when needed.
-Mark individual items as DONE during implementation.
-
-
-## __Source environment:__ `STAGE`
-1. __Client-ID in source:__ _Content-Creator Client_ (or specify alternate UUID here: `...`)
-1. [ ] CC: Update all profiles in source domain if necessary
-1. [ ] CC: Update all catalog-items in source domain if necessary
-1. [ ] CC: Ensure no translation conflicts are present in source domain
-1. [ ] DEV/CC: Call the endpoint `breaking-changes/` and check for entries
-1. [ ] DEV: If _breaking-changes_ are present, write migration instructions
-1. __Create domain template from domain:__
-	1. __Domain-ID in source:__ `<UUID>`
-	1. __New version no for domain template:__ `0.0.0 `
-	1. [ ] DEV: Create DT
-	1. [ ] DEV: Download DT and store in content-repository
-	1. [ ] DEV: Download FTB and store in content-repository
-
-## __Specify Internal Target environment(s):__
-
-__CC__: __Remove__ any internal environments from the list that should **not** be targeted.
-
-__DEV__: After successful AT on develop/stage, __check__ these items as done.
-
-
-- __Application dependency:__ Deploy only if verinice-veo in the environment is at at least version: `veriniceXY`
-- [ ] `STAGE` was deployed successfully
-- [ ] `DEVELOP` was deployed successfully
-
-## __CC: Specify External Target environment(s):__
-
-__CC__: __Remove__ any external environments from the list that should **not** be targeted.
-
-__DEV__: After successful AT on develop/stage, give this list of environments to the Ops-Team via ticket and then __check__ these items here as DONE.
-
-- __Application dependency:__ Deploy only if verinice-veo in the environment is at at least version: `veriniceXY`
-- [ ] `GCP` deployment was handed over to Ops-Team
-- [ ] `PROD` deployment was handed over to Ops-Team
-- [ ] `SANDBOX` deployment was handed over to Ops-Team
-- [ ] `TALOS-SERNET` deployment was handed over to Ops-Team
-- [ ] `TALOS-ONPREM-REFERENCE` deployment was handed over to Ops-Team
-- [ ] `...`
-
-# Created Artifacts after successful creation
-
-- Domain template: `URL-TO-GIT-RESOURCE`
-- Form template bundle: `URL-TO-GIT-RESOURCE`
+1. Apply the **current milestone** to this issue (so we'll have three full weeks to test the content).
+2. Find the **source domain** in the content creation client on stage.
+3. If necessary, update all **catalog items** in the source domain.
+4. If necessary, update all **profiles** in the source domain.
+5. Ensure no **conflicts** with other domains are present.
+6. If **breaking changes** are present, create migration steps.
+7. Create a **domain template** from the domain.
+8. Download the domain template and store it in the **content repository**.
+9. Download the form template bundle and store it in the **content repository**.
+10. Upload the domain template to **develop**.
+11. Upload the form template bundle to **develop**.
+12. Add content download links to the **deployment ticket** for the target milestone.
 
 # Acceptance criteria
 
-Mark items as DONE during acceptance test. Acceptance test must be performed in a different domain from the source domain from above.
-
-
-## DEV
-- [ ] DT was successfully deployed to  environments
-	- [ ] STAGE
-	- [ ] DEV
-- [ ] Form template bundle successfully deployed
-	- [ ] STAGE
-	- [ ] DEV
-- [ ] All relevant artifacts (domain template, form template bundle, ...) are committed to GIT repository
-
-## CC
-- [ ] Domain update is offered in the relevant clients as expected (sample at least one client in each env. - this should __not__ be the content-creators' client)
-
-## DEV
-- [ ] Ticket for `SANDBOX-/PROD-/TALOS-/...` deployments as specified above was created for Ops-Team (when all previous checks have passed)
-
+- [ ] The new content is available in the **vanilla test client on stage**.
+- [ ] The new content is available on **develop**.
+- [ ] Download links for the new content have been added to the deployment ticket.
 
 ---
 
 /label ~"1.Component::3.Content"
 
 /label ~"2.IssueType::1.Story"
-
-/label ~"3.Status::1.Specification"
