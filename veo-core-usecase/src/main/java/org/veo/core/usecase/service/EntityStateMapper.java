@@ -40,6 +40,7 @@ import org.veo.core.entity.CustomLink;
 import org.veo.core.entity.Domain;
 import org.veo.core.entity.Element;
 import org.veo.core.entity.Nameable;
+import org.veo.core.entity.Person;
 import org.veo.core.entity.Process;
 import org.veo.core.entity.RiskAffected;
 import org.veo.core.entity.Scenario;
@@ -64,6 +65,7 @@ import org.veo.core.entity.state.ControlImplementationState;
 import org.veo.core.entity.state.CustomLinkState;
 import org.veo.core.entity.state.DomainAssociationState;
 import org.veo.core.entity.state.ElementState;
+import org.veo.core.entity.state.PersonState;
 import org.veo.core.entity.state.PotentialImpactDomainAssociationState;
 import org.veo.core.entity.state.RequirementImplementationState;
 import org.veo.core.entity.state.RiskAffectedState;
@@ -147,6 +149,10 @@ public class EntityStateMapper {
       if (firePartsChanged) {
         publishPartsChanged(ce, oldParts);
       }
+    }
+    if (target instanceof Person person) {
+      var personState = (PersonState) source;
+      person.setUsername(personState.getUsername());
     }
   }
 

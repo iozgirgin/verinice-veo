@@ -692,6 +692,7 @@ public final class EntityToDtoTransformer {
   public FullPersonInDomainDto transformPerson2Dto(Person source, Domain domain) {
     var target = new FullPersonInDomainDto(source.getId());
     mapCompositeElementProperties(source, target, domain);
+    target.setUsername(source.getUsername());
     return target;
   }
 

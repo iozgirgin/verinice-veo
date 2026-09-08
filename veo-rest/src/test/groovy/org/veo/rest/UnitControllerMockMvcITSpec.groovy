@@ -137,7 +137,8 @@ class UnitControllerMockMvcITSpec extends VeoMvcSpec {
                     id: personId,
                     name: 'Person',
                     owner: [targetUri:"/units/$unitId"],
-                    type: 'person'
+                    type: 'person',
+                    username: 'petterson',
                 ],
                 [
                     id: compositeId,
@@ -191,6 +192,11 @@ class UnitControllerMockMvcITSpec extends VeoMvcSpec {
         with(savedPart.controlImplementations.first()) {
             control.name == 'Control'
             responsible.name == 'Person'
+        }
+
+        and:
+        with(personDataRepository.findAll().first) {
+            it.username == "petterson"
         }
     }
 

@@ -17,7 +17,10 @@
  */
 package org.veo.adapter.presenter.api.dto;
 
+import jakarta.validation.constraints.Size;
+
 import org.veo.core.entity.Person;
+import org.veo.core.entity.state.PersonState;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -31,8 +34,11 @@ import lombok.ToString;
     title = "Person",
     description =
         "Person, role or group of persons - this DTO represents a person from the viewpoint of a domain and contains both basic and domain-specific properties.")
-public abstract class AbstractPersonInDomainDto
-    extends AbstractCompositeElementInDomainDto<Person> {
+public abstract class AbstractPersonInDomainDto extends AbstractCompositeElementInDomainDto<Person>
+    implements PersonState {
+
+  @Size(min = 1, max = Person.USERNAME_MAX_LENGTH)
+  private String username;
 
   @Override
   @Schema(description = "Full name", example = "Viola Seher")

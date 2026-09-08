@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
@@ -33,11 +34,17 @@ import org.veo.core.entity.Person;
 import org.veo.core.entity.TemplateItemAspects;
 
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 @Entity(name = "PERSON")
 @ToString(onlyExplicitlyIncluded = true, callSuper = true)
 public class PersonData extends ElementData implements Person {
+
+  @Getter
+  @Setter
+  @Column(length = Person.USERNAME_MAX_LENGTH)
+  String username;
 
   @ManyToMany(
       targetEntity = PersonData.class,

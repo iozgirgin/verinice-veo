@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Size;
 
 import org.veo.adapter.presenter.api.dto.CompositeEntityDto;
 import org.veo.adapter.presenter.api.dto.CustomAspectDto;
@@ -32,7 +33,7 @@ import org.veo.adapter.presenter.api.dto.CustomLinkDto;
 import org.veo.adapter.presenter.api.dto.DomainAssociationDto;
 import org.veo.adapter.presenter.api.response.IdentifiableDto;
 import org.veo.core.entity.Person;
-import org.veo.core.entity.state.CompositeElementState;
+import org.veo.core.entity.state.PersonState;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -45,7 +46,10 @@ import lombok.ToString;
 @ToString(onlyExplicitlyIncluded = true, callSuper = true)
 @Schema(title = "person", description = "Schema for person")
 public class FullPersonDto extends CompositeEntityDto<Person>
-    implements IdentifiableDto, CompositeElementState<Person> {
+    implements IdentifiableDto, PersonState {
+
+  @Size(min = 1, max = Person.USERNAME_MAX_LENGTH)
+  private String username;
 
   @Override
   @Schema(description = "The name for the person.", example = "Mia Musterfrau")

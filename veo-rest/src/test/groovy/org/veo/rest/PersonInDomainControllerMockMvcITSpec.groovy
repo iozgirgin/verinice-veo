@@ -64,6 +64,7 @@ class PersonInDomainControllerMockMvcITSpec extends VeoMvcSpec {
             name         : "Harry Larry",
             abbreviation : "HL",
             description  : "Typing swiftly, thinking slowly",
+            username     : "hylarryous",
             owner        : [targetUri: "/units/$unitId"],
             subType      : "Programmer",
             status       : "CODING",
@@ -98,6 +99,7 @@ class PersonInDomainControllerMockMvcITSpec extends VeoMvcSpec {
         response.abbreviation == "HL"
         response.description == "Typing swiftly, thinking slowly"
         response.designator =~ /PER-\d+/
+        response.username == "hylarryous"
         response.owner.targetUri == "http://localhost/units/$unitId"
         response.createdBy == "user@domain.example"
         response.createdAt != null
@@ -135,6 +137,7 @@ class PersonInDomainControllerMockMvcITSpec extends VeoMvcSpec {
         then: "it contains basic values"
         personInDsgvo.name == "Harry Larry"
         personInDsgvo.description == "Typing swiftly, thinking slowly"
+        personInDsgvo.username == "hylarryous"
 
         and: "values for second domain"
         personInDsgvo.subType == "PER_Person"
@@ -145,6 +148,7 @@ class PersonInDomainControllerMockMvcITSpec extends VeoMvcSpec {
 
         when: "updating and reloading the person from the viewpoint of the second domain"
         personInDsgvo.description = "New description"
+        personInDsgvo.username = "hl"
         personInDsgvo.status = "ARCHIVED"
         personInDsgvo.customAspects.person_generalInformation = [
             person_generalInformation_givenName: "Harry"
@@ -156,6 +160,7 @@ class PersonInDomainControllerMockMvcITSpec extends VeoMvcSpec {
 
         then: "updated values are present"
         personInDsgvo.description == "New description"
+        personInDsgvo.username == "hl"
         personInDsgvo.status == "ARCHIVED"
         personInDsgvo.customAspects.person_generalInformation.person_generalInformation_givenName == "Harry"
 
@@ -173,6 +178,7 @@ class PersonInDomainControllerMockMvcITSpec extends VeoMvcSpec {
         and: "some basic values have been updated"
         personInTestdomain.name == "Harry Larry"
         personInTestdomain.description == "New description"
+        personInTestdomain.username == "hl"
 
         and: "values for the second domain are absent"
         personInTestdomain.customAspects.person_generalInformation == null

@@ -1,6 +1,6 @@
 /*
  * verinice.veo
- * Copyright (C) 2019  Urs Zeidler.
+ * Copyright (C) 2026  Jonas Jordan
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -15,35 +15,10 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.veo.core.entity;
+package org.veo.core.entity.state;
 
-/**
- * Person represents a natural person such as an employee. Persons will have responsibilities
- * assigned for other domain objects.
- */
-public interface Person extends CompositeElement<Person> {
+import org.veo.core.entity.Person;
 
-  String SINGULAR_TERM = "person";
-  String PLURAL_TERM = "persons";
-  String TYPE_DESIGNATOR = "PER";
-  int USERNAME_MAX_LENGTH = 256;
-
-  @Override
-  default Class<Person> getModelInterface() {
-    return Person.class;
-  }
-
-  @Override
-  default String getModelType() {
-    return SINGULAR_TERM;
-  }
-
-  @Override
-  default String getTypeDesignator() {
-    return TYPE_DESIGNATOR;
-  }
-
+public interface PersonState extends CompositeElementState<Person> {
   String getUsername();
-
-  void setUsername(String username);
 }
