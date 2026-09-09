@@ -191,6 +191,7 @@ public class GenericElementRepositoryImpl implements GenericElementRepository {
             userRights.getClientId(),
             userRights.isUnitAccessRestricted(),
             userRights.getReadableUnitIds())
+        .filter(elementType::isInstance)
         .map(e -> (T) e);
   }
 

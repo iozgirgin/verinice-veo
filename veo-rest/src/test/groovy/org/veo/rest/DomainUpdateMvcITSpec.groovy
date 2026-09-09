@@ -536,7 +536,7 @@ class DomainUpdateMvcITSpec extends VeoMvcSpec {
         when: "removing the values and reevaluating"
         findings = parseJson(get("/domains/${domain.id}/persons/$personId")).with {
             it.customAspects.remove('physique')
-            parseJson(post("/domains/${domain.id}/assets/evaluation", it, 200)).inspectionFindings
+            parseJson(post("/domains/${domain.id}/persons/evaluation", it, 200)).inspectionFindings
         }
 
         then:

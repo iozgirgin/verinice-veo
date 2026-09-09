@@ -19,17 +19,21 @@ package org.veo.core
 
 import org.springframework.beans.factory.annotation.Autowired
 
+import org.veo.core.entity.Asset
 import org.veo.core.entity.Client
 import org.veo.core.entity.ElementType
+import org.veo.core.entity.Person
 import org.veo.core.entity.Unit
 import org.veo.core.entity.definitions.attribute.DurationAttributeDefinition
 import org.veo.core.entity.definitions.attribute.TextAttributeDefinition
+import org.veo.core.entity.exception.NotFoundException
 import org.veo.core.repository.GenericElementRepository
 import org.veo.persistence.access.ClientRepositoryImpl
 import org.veo.persistence.access.DocumentRepositoryImpl
 import org.veo.persistence.access.PersonRepositoryImpl
 import org.veo.persistence.access.ScopeRepositoryImpl
 import org.veo.persistence.access.UnitRepositoryImpl
+import org.veo.rest.security.NoRestrictionAccessRight
 
 import jakarta.transaction.Transactional
 
@@ -404,5 +408,20 @@ class GenericElementRepositoryITSpec extends VeoSpringSpec {
             "P3D",
             "PT1S"
         ]
+    }
+
+    def "get element by ID"() {
+        given:
+        def accessRight = NoRestrictionAccessRight.from(client.idAsString)
+        UUID personId = genericElementRepository.saveAll([newPerson(unit)]).first().id
+
+        expect:
+        genericElementRepository.getById(personId, Person.class, accessRight) != null
+
+        when:
+        genericElementRepository.getById(personId, Asset.class, accessRight)
+
+        then:
+        thrown(NotFoundException)
     }
 }
