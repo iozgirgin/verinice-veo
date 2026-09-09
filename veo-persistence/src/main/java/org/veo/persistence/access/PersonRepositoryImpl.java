@@ -20,6 +20,7 @@ package org.veo.persistence.access;
 import static java.util.Collections.singleton;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -47,6 +48,7 @@ import org.veo.persistence.entity.jpa.ValidationService;
 public class PersonRepositoryImpl extends AbstractCompositeEntityRepositoryImpl<Person, PersonData>
     implements PersonRepository {
 
+  private final PersonDataRepository personDataRepository;
   private final AssetDataRepository assetDataRepository;
   private final ProcessDataRepository processDataRepository;
   private final ScopeDataRepository scopeDataRepository;
@@ -70,6 +72,7 @@ public class PersonRepositoryImpl extends AbstractCompositeEntityRepositoryImpl<
         scopeDataRepository,
         elementQueryFactory,
         Person.class);
+    this.personDataRepository = dataRepository;
     this.assetDataRepository = assetDataRepository;
     this.processDataRepository = processDataRepository;
     this.scopeDataRepository = scopeDataRepository;
@@ -128,5 +131,12 @@ public class PersonRepositoryImpl extends AbstractCompositeEntityRepositoryImpl<
   @Override
   public ElementQuery<Person> query(Client client) {
     return elementQueryFactory.queryPersons(client);
+  }
+
+  @Override
+  public List<Person> findAllByUsername(String username, UUID clientId) {
+    return personDataRepository.findAllByUsername(username, clientId).stream()
+        .map(Person.class::cast)
+        .toList();
   }
 }

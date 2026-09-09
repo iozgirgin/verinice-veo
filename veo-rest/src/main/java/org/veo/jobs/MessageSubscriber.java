@@ -17,6 +17,7 @@
  */
 package org.veo.jobs;
 
+import static org.veo.core.events.MessageCreatorImpl.EVENT_TYPE_ACCOUNT_DELETION;
 import static org.veo.core.events.MessageCreatorImpl.EVENT_TYPE_CLIENT_CHANGE;
 import static org.veo.core.events.MessageCreatorImpl.EVENT_TYPE_ELEMENT_TYPE_DEFINITION_UPDATE;
 import static org.veo.rest.VeoRestConfiguration.PROFILE_BACKGROUND_TASKS;
@@ -109,7 +110,10 @@ public class MessageSubscriber {
                               value = "${veo.message.consume.dlx}")),
               exchange =
                   @Exchange(value = "${veo.message.exchanges.veo-subscriptions}", type = "topic"),
-              key = {"${veo.message.routing-key-prefix}" + EVENT_TYPE_CLIENT_CHANGE}))
+              key = {
+                "${veo.message.routing-key-prefix}" + EVENT_TYPE_CLIENT_CHANGE,
+                "${veo.message.routing-key-prefix}" + EVENT_TYPE_ACCOUNT_DELETION,
+              }))
   public void handleSubscriptionMessage(EventMessage event) throws JacksonException {
     log.info("handle subscription message: {} {}", event.getRoutingKey(), event);
     try {
@@ -117,12 +121,20 @@ public class MessageSubscriber {
       var eventType = content.get("eventType").asString();
       switch (eventType) {
         case EVENT_TYPE_CLIENT_CHANGE -> handleClientStateEvent(content);
+        case EVENT_TYPE_ACCOUNT_DELETION -> handleAccountDeletionEvent(content);
         default -> throw new IllegalArgumentException("Unexpected event type value: " + eventType);
       }
     } catch (Exception e) {
       log.error("Error while handleEventMessage", e);
       throw e;
     }
+  }
+
+  private void handleAccountDeletionEvent(JsonNode content) {
+    var clientId = UUID.fromString(content.get("clientId").asString());
+    var username = content.get("username").asString();
+    log.info("Received {} message for {}", EVENT_TYPE_ACCOUNT_DELETION, username);
+    AsSystemUser.runAsAdmin(() -> incomingMessageHandler.handleAccountDeletion(username, clientId));
   }
 
   private void handleElementTypeDefinitionUpdate(JsonNode content) {

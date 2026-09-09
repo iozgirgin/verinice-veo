@@ -17,6 +17,14 @@
  */
 package org.veo.persistence.access.jpa;
 
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.data.jpa.repository.Query;
+
 import org.veo.persistence.entity.jpa.PersonData;
 
-public interface PersonDataRepository extends CompositeEntityDataRepository<PersonData> {}
+public interface PersonDataRepository extends CompositeEntityDataRepository<PersonData> {
+  @Query("select p from #{#entityName} p " + "where p.username = ?1 and p.owner.client.id = ?2")
+  List<PersonData> findAllByUsername(String username, UUID clientId);
+}

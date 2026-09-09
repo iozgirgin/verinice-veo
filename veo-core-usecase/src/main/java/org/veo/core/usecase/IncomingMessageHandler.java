@@ -17,8 +17,14 @@
  */
 package org.veo.core.usecase;
 
+import java.time.Instant;
+import java.util.UUID;
+
+import jakarta.transaction.Transactional;
+
 import org.veo.core.entity.Domain;
 import org.veo.core.entity.ElementType;
+import org.veo.core.repository.PersonRepository;
 import org.veo.core.repository.RepositoryProvider;
 import org.veo.service.ElementMigrationService;
 import org.veo.service.TemplateItemMigrationService;
@@ -30,9 +36,21 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 public class IncomingMessageHandler {
+  private final PersonRepository personRepository;
   private final RepositoryProvider repositoryProvider;
   private final ElementMigrationService elementMigrationService;
   private final TemplateItemMigrationService templateItemMigrationService;
+
+  @Transactional(Transactional.TxType.REQUIRES_NEW)
+  public void handleAccountDeletion(String username, UUID clientId) {
+    personRepository
+        .findAllByUsername(username, clientId)
+        .forEach(
+            p -> {
+              p.setUsername(null);
+              p.setUpdatedAt(Instant.now());
+            });
+  }
 
   public void handleElementTypeDefinitionUpdate(Domain domain, ElementType elementType) {
     repositoryProvider

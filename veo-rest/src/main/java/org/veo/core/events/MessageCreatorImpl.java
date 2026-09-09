@@ -60,6 +60,7 @@ public class MessageCreatorImpl implements MessageCreator {
   public static final String EVENT_TYPE = "eventType";
   public static final String EVENT_TYPE_DOMAIN_CREATION = "domain_creation";
   public static final String EVENT_TYPE_CLIENT_CHANGE = "client_change";
+  public static final String EVENT_TYPE_ACCOUNT_DELETION = "account_deletion";
   public static final String EVENT_TYPE_ENTITY_REVISION = "entity_revision";
   public static final String EVENT_TYPE_ELEMENT_TYPE_DEFINITION_UPDATE =
       "element_type_definition_update";

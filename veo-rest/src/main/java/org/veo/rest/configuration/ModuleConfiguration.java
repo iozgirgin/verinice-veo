@@ -67,6 +67,7 @@ import org.veo.core.repository.DomainRepository;
 import org.veo.core.repository.DomainTemplateRepository;
 import org.veo.core.repository.FlyweightLinkRepository;
 import org.veo.core.repository.GenericElementRepository;
+import org.veo.core.repository.PersonRepository;
 import org.veo.core.repository.ProcessRepository;
 import org.veo.core.repository.ProfileItemRepository;
 import org.veo.core.repository.ProfileRepository;
@@ -1025,11 +1026,15 @@ public class ModuleConfiguration {
 
   @Bean
   public IncomingMessageHandler incomingMessageHandler(
+      PersonRepository personRepository,
       RepositoryProvider repositoryProvider,
       ElementMigrationService elementMigrationService,
       TemplateItemMigrationService templateItemMigrationService) {
     return new IncomingMessageHandler(
-        repositoryProvider, elementMigrationService, templateItemMigrationService);
+        personRepository,
+        repositoryProvider,
+        elementMigrationService,
+        templateItemMigrationService);
   }
 
   @Bean

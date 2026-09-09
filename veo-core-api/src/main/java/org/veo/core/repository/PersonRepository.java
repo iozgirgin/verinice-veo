@@ -17,6 +17,9 @@
  */
 package org.veo.core.repository;
 
+import java.util.List;
+import java.util.UUID;
+
 import org.veo.core.entity.Person;
 
 /**
@@ -25,4 +28,6 @@ import org.veo.core.entity.Person;
  * <p>Implements basic CRUD operations from the superinterface and extends them with more specific
  * methods - i.e. queries based on particular fields.
  */
-public interface PersonRepository extends ElementRepository<Person> {}
+public interface PersonRepository extends ElementRepository<Person> {
+  List<Person> findAllByUsername(String username, UUID clientId);
+}
