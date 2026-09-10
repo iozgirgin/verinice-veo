@@ -64,7 +64,7 @@ springBoot {
     buildInfo {
         properties {
             if (!includeRealInfo) {
-                time = null
+                excludes = ['time']
             }
             // add additional CI information when building in Jenkins
             if (continuousIntegrationBuild) {
