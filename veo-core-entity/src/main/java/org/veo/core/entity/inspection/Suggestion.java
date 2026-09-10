@@ -17,8 +17,17 @@
  */
 package org.veo.core.entity.inspection;
 
+import java.util.Set;
+
+import javax.annotation.Nullable;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+import org.veo.core.entity.DomainBase;
+import org.veo.core.entity.ElementType;
+import org.veo.core.entity.exception.NotFoundException;
 
 import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -34,4 +43,19 @@ import io.swagger.v3.oas.annotations.media.Schema;
     discriminatorMapping =
         @DiscriminatorMapping(value = AddPartSuggestion.NAME, schema = AddPartSuggestion.class),
     oneOf = {AddPartSuggestion.class})
-public interface Suggestion {}
+public interface Suggestion {
+
+  /**
+   * @param elementType Element type targeted by the inspection that holds this suggestion, or
+   *     {@code null} if the inspection applies to all element types
+   * @throws IllegalArgumentException If this suggestion is not applicable to an inspection that
+   *     targets given element type, or if it references undefined domain contents
+   * @throws NotFoundException If domain contents referenced by this suggestion cannot be found
+   */
+  void selfValidate(@Nullable ElementType elementType, DomainBase domain);
+
+  @JsonIgnore
+  default Set<String> getReferencedSubTypes() {
+    return Set.of();
+  }
+}

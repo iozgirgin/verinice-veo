@@ -17,6 +17,15 @@
  */
 package org.veo.core.entity.inspection;
 
+import java.util.Set;
+
+import javax.annotation.Nullable;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import org.veo.core.entity.DomainBase;
+import org.veo.core.entity.ElementType;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -36,4 +45,22 @@ public class AddPartSuggestion implements Suggestion {
   /** Suggested subtype of the new part. */
   @Schema(description = "Suggested sub type for the new part")
   private String partSubType;
+
+  @Override
+  public void selfValidate(@Nullable ElementType elementType, DomainBase domain) {
+    if (elementType == null) {
+      throw new IllegalArgumentException(
+          "'%s' suggestions are only supported by inspections that target a specific element type"
+              .formatted(NAME));
+    }
+    if (partSubType != null) {
+      domain.getElementTypeDefinition(elementType).getSubTypeDefinition(partSubType);
+    }
+  }
+
+  @Override
+  @JsonIgnore
+  public Set<String> getReferencedSubTypes() {
+    return partSubType == null ? Set.of() : Set.of(partSubType);
+  }
 }

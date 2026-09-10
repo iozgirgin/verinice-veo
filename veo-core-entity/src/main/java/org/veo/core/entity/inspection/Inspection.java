@@ -21,11 +21,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import jakarta.validation.constraints.Size;
 
 import javax.annotation.Nullable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.veo.core.entity.Domain;
@@ -96,14 +99,26 @@ public class Inspection {
     return this;
   }
 
+  /** Element sub types referenced by this inspection's {@link Suggestion}s. */
+  @JsonIgnore
+  public Set<String> getSuggestedSubTypes() {
+    return suggestions.stream()
+        .flatMap(s -> s.getReferencedSubTypes().stream())
+        .collect(Collectors.toSet());
+  }
+
   /**
-   * @throws IllegalArgumentException If the condition is an invalid expression
+   * @throws IllegalArgumentException If the condition is an invalid expression or if a suggestion
+   *     is invalid for this inspection
    * @throws NotFoundException If this inspection's element type or subtype, or any domain contents
-   *     referenced by its condition cannot be found
+   *     referenced by its condition or suggestions cannot be found
    */
   public void selfValidate(DomainBase domain) {
-    var etd = domain.getElementTypeDefinition(getElementType());
-    Optional.ofNullable(getElementSubType()).ifPresent(etd::getSubTypeDefinition);
+    if (getElementType() != null) {
+      var etd = domain.getElementTypeDefinition(getElementType());
+      Optional.ofNullable(getElementSubType()).ifPresent(etd::getSubTypeDefinition);
+    }
+    suggestions.forEach(s -> s.selfValidate(getElementType(), domain));
     condition.selfValidate(domain, getElementType());
   }
 }

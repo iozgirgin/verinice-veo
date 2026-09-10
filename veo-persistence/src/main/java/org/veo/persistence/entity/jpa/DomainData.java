@@ -36,7 +36,6 @@ import org.veo.core.entity.Client;
 import org.veo.core.entity.Domain;
 import org.veo.core.entity.DomainTemplate;
 import org.veo.core.entity.Profile;
-import org.veo.core.entity.inspection.Inspection;
 import org.veo.core.entity.risk.RiskDefinitionRef;
 import org.veo.core.entity.riskdefinition.RiskDefinition;
 
@@ -105,11 +104,6 @@ public class DomainData extends DomainBaseData implements Domain {
   public void removeRiskDefinition(RiskDefinitionRef riskDefinition) {
     riskDefinitionSet.remove(riskDefinition.getIdRef());
     setUpdatedAt(now());
-  }
-
-  @Override
-  public boolean applyInspection(String inspectionId, Inspection inspection) {
-    return inspectionSet.apply(inspectionId, inspection);
   }
 
   @Override

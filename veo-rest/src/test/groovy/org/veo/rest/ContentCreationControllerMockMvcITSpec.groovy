@@ -2443,6 +2443,138 @@ class ContentCreationControllerMockMvcITSpec extends ContentSpec {
         }
     }
 
+    @WithUserDetails("content-creator")
+    def "addPart suggestions are validated"() {
+        given: "an asset definition with two sub types and a process definition with another sub type"
+        executeInTransaction {
+            domainDataRepository.save(domainDataRepository.findById(testDomain.id).get().tap {
+                getElementTypeDefinition(ElementType.ASSET).subTypes.AST_Server = newSubTypeDefinition {}
+                getElementTypeDefinition(ElementType.ASSET).subTypes.AST_Sticker = newSubTypeDefinition {}
+                getElementTypeDefinition(ElementType.PROCESS).subTypes.PRO_Special = newSubTypeDefinition {}
+            })
+        }
+        def inspection = [
+            description: [en: "Every server needs a sticker"],
+            severity: "WARNING",
+            elementType: "asset",
+            elementSubType: "AST_Server",
+            condition: [type: "constant", value: true],
+        ]
+
+        when: "adding an inspection that suggests an undefined part sub type"
+        inspection.suggestions = [
+            [type: "addPart", partSubType: "AST_Bogus"]
+        ]
+        put("/content-creation/domains/${testDomain.idAsString}/inspections/stickerMissing", inspection, [:], 422)
+
+        then: "it is rejected"
+        UnprocessableDataException ex = thrown()
+        ex.message ==~ /Validation error in inspection 'stickerMissing': Sub type AST_Bogus is not defined.*/
+
+        when: "suggesting a part sub type that only exists for another element type"
+        inspection.suggestions = [
+            [type: "addPart", partSubType: "PRO_Special"]
+        ]
+        put("/content-creation/domains/${testDomain.idAsString}/inspections/stickerMissing", inspection, [:], 422)
+
+        then: "it is rejected as well"
+        ex = thrown()
+        ex.message ==~ /Validation error in inspection 'stickerMissing': Sub type PRO_Special is not defined.*/
+
+        when: "suggesting a part sub type that exists for the inspected element type"
+        inspection.suggestions = [
+            [type: "addPart", partSubType: "AST_Sticker"]
+        ]
+        put("/content-creation/domains/${testDomain.idAsString}/inspections/stickerMissing", inspection, [:], 201)
+
+        then: "it is saved"
+        parseJson(get("/domains/${testDomain.idAsString}/inspections/stickerMissing")).suggestions == [
+            [type: "addPart", partSubType: "AST_Sticker"]
+        ]
+    }
+
+    @WithUserDetails("content-creator")
+    def "an inspection without a target element type must not contain addPart suggestions"() {
+        given:
+        def inspection = [
+            description: [en: "Something is wrong"],
+            severity: "WARNING",
+            condition: [type: "constant", value: true],
+        ]
+
+        when:
+        inspection.suggestions = [
+            [type: "addPart"]
+        ]
+        put("/content-creation/domains/${testDomain.idAsString}/inspections/allTypes", inspection, [:], 422)
+
+        then:
+        UnprocessableDataException ex = thrown()
+        ex.message == "Validation error in inspection 'allTypes': 'addPart' suggestions are only supported by inspections that target a specific element type"
+
+        when: "omitting the suggestions"
+        inspection.suggestions = []
+        put("/content-creation/domains/${testDomain.idAsString}/inspections/allTypes", inspection, [:], 201)
+
+        then:
+        parseJson(get("/domains/${testDomain.idAsString}/inspections/allTypes")).suggestions == []
+    }
+
+    @WithUserDetails("content-creator")
+    def "a sub type suggested by an inspection cannot be removed"() {
+        given: "an asset definition with two sub types and an inspection suggesting one of them"
+        executeInTransaction {
+            domainDataRepository.save(domainDataRepository.findById(testDomain.id).get().tap {
+                getElementTypeDefinition(ElementType.ASSET).subTypes.AST_Server = newSubTypeDefinition {}
+                getElementTypeDefinition(ElementType.ASSET).subTypes.AST_Sticker = newSubTypeDefinition {}
+                applyInspection("stickerMissing", newInspection {
+                    elementType = ElementType.ASSET
+                    elementSubType = "AST_Server"
+                    suggestAddingPart("AST_Sticker")
+                })
+            })
+        }
+
+        when: "removing the suggested sub type from the asset definition"
+        put("/content-creation/domains/${testDomain.idAsString}/element-type-definitions/asset", [
+            subTypes: [
+                AST_Server: [statuses: ['NEW']],
+            ],
+            translations: [
+                en: [
+                    asset_AST_Server_singular: 'Server',
+                    asset_AST_Server_plural: 'Servers',
+                    asset_AST_Server_status_NEW: 'New',
+                ]
+            ],
+        ], [:], 422)
+
+        then:
+        UnprocessableDataException ex = thrown()
+        ex.message == "Cannot remove sub type 'AST_Sticker', because it is suggested by inspection 'stickerMissing'"
+
+        when: "keeping the suggested sub type"
+        put("/content-creation/domains/${testDomain.idAsString}/element-type-definitions/asset", [
+            subTypes: [
+                AST_Server: [statuses: ['NEW']],
+                AST_Sticker: [statuses: ['NEW']],
+            ],
+            translations: [
+                en: [
+                    asset_AST_Server_singular: 'Server',
+                    asset_AST_Server_plural: 'Servers',
+                    asset_AST_Server_status_NEW: 'New',
+                    asset_AST_Sticker_singular: 'Sticker',
+                    asset_AST_Sticker_plural: 'Stickers',
+                    asset_AST_Sticker_status_NEW: 'New',
+                ]
+            ],
+        ], [:], 204)
+
+        then:
+        noExceptionThrown()
+    }
+
     private List<Map> migrationDefinitionChangeKey() {
         def m = [
             [description : [en: "a key change"],

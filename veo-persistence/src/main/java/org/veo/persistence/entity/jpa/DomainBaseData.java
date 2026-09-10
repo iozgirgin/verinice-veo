@@ -216,6 +216,25 @@ public abstract class DomainBaseData extends IdentifiableVersionedData
     inspectionSet.remove(inspectionId);
   }
 
+  private void validateSubTypesUsedByInspections(ElementTypeDefinition definition) {
+    getInspections()
+        .forEach(
+            (id, inspection) -> {
+              if (inspection.getElementType() != definition.getElementType()) {
+                return;
+              }
+              inspection.getSuggestedSubTypes().stream()
+                  .filter(subType -> !definition.getSubTypes().containsKey(subType))
+                  .findFirst()
+                  .ifPresent(
+                      subType -> {
+                        throw new UnprocessableDataException(
+                            "Cannot remove sub type '%s', because it is suggested by inspection '%s'"
+                                .formatted(subType, id));
+                      });
+            });
+  }
+
   private void validate(String id, Inspection inspection) {
     try {
       inspection.selfValidate(this);
@@ -235,6 +254,7 @@ public abstract class DomainBaseData extends IdentifiableVersionedData
   @Override
   public void applyElementTypeDefinition(ElementTypeDefinition definition) {
     ElementTypeDefinitionValidator.validate(definition);
+    validateSubTypesUsedByInspections(definition);
 
     ElementTypeDefinition existingDefinition =
         getElementTypeDefinition(definition.getElementType());
