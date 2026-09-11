@@ -35,6 +35,7 @@ import com.networknt.schema.SchemaContext
 import com.networknt.schema.SchemaRegistry
 import com.networknt.schema.SpecificationVersion
 
+import org.veo.TestProfileResolver
 import org.veo.core.entity.Client
 import org.veo.core.entity.ClientState
 import org.veo.core.entity.Domain
@@ -81,7 +82,7 @@ import tools.jackson.databind.json.JsonMapper
  * Base class for veo specifications that use Spring
  */
 @SpringBootTest(classes = RestApplication)
-@ActiveProfiles("test")
+@ActiveProfiles(resolver = TestProfileResolver)
 @Import(NopEntityValidationConfiguration)
 @ImportAutoConfiguration
 @ComponentScan("org.veo")
