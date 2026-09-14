@@ -121,6 +121,11 @@ public class TaskQueryImpl implements TaskQuery {
     return new PagedResult<>(pagingConfig, pageItems, totalResultCount, totalPages);
   }
 
+  @Override
+  public void whereUsernameIs(String username) {
+    this.username = username;
+  }
+
   private @NonNull Map<UUID, RequirementImplementation> getRiMap(List<Object[]> resultList) {
     var riIds =
         resultList.stream()
@@ -152,6 +157,7 @@ public class TaskQueryImpl implements TaskQuery {
         .collect(Collectors.toMap(Person::getId, Function.identity()));
   }
 
+  @SuppressWarnings("PMD.UseStringBufferForStringAppends") // concatenation count is trivial
   private Query taskQuery(PagingConfiguration<SortCriterion> paging, boolean countOnly) {
     // SELECT (with mandatory filters)
     var params =
@@ -164,6 +170,12 @@ public class TaskQueryImpl implements TaskQuery {
             + (countOnly
                 ? "select count(*) from t\n"
                 : "select t.type, t.assignee_id, t.deadline, t.ri_id from t\n");
+
+    // WHERE / JOIN (optional filters)
+    if (username != null) {
+      params.put("username", username);
+      query += "inner join element as p on p.db_id = t.assignee_id and p.username = :username\n";
+    }
 
     // ORDER & LIMIT
     if (!countOnly) {

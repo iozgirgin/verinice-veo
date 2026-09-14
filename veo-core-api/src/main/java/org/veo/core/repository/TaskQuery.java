@@ -26,6 +26,8 @@ import java.util.stream.Collectors;
 import org.veo.core.entity.Task;
 
 public interface TaskQuery extends Query<Task, TaskQuery.SortCriterion> {
+  void whereUsernameIs(String username);
+
   enum SortCriterion {
     DEADLINE;
 

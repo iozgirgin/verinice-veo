@@ -18,6 +18,7 @@
 package org.veo.persistence.access
 
 import java.time.LocalDate
+import java.util.function.Consumer
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.transaction.support.TransactionTemplate
@@ -82,10 +83,12 @@ class TaskQuerySpec extends AbstractJpaSpec {
         txTemplate.execute {
             def personA = personDataRepository.save(newPerson(unit) {
                 name = 'person a'
+                username = 'pa'
                 associateWithDomain(domain, "Programmer", "CODING")
             })
             def personB = personDataRepository.save(newPerson(unit) {
                 name = 'person b'
+                username = 'pb'
                 associateWithDomain(domain, "Programmer", "CODING")
             })
             def controlA = controlDataRepository.save(newControl(unit) {
@@ -206,6 +209,31 @@ class TaskQuerySpec extends AbstractJpaSpec {
                     assignee().name == "person b"
                 }
             }
+
+            and: "tasks can be filtered by username"
+            with(query(unit,domain) {
+                it.whereUsernameIs('pb')
+            }) {
+                totalResults() == 2
+                totalPages() == 1
+                resultPage()*.deadline() == [
+                    LocalDate.parse("2028-01-03"),
+                    null,
+                ]
+
+                with(resultPage()[0]) {
+                    type() == TaskType.REQUIREMENT_IMPLEMENTATION_REVISION
+                    requirementImplementation().origin.name == "servicable"
+                    requirementImplementation().control.name == "control c"
+                    assignee().name == "person b"
+                }
+                with(resultPage()[1]) {
+                    type() == TaskType.REQUIREMENT_IMPLEMENTATION
+                    requirementImplementation().origin.name == "servicable"
+                    requirementImplementation().control.name == "control e"
+                    assignee().name == "person b"
+                }
+            }
         }
     }
 
@@ -294,10 +322,13 @@ class TaskQuerySpec extends AbstractJpaSpec {
     PagedResult<Task, TaskQuery.SortCriterion> query(
             Unit unit = this.unit,
             Domain domain = this.domain,
+            Consumer<TaskQuery> applyFilters = {},
             UserAccessRights rights = NoRestrictionAccessRight.from(client.idAsString),
             PagingConfiguration<TaskQuery.SortCriterion> paging = PagingConfiguration.unpaged(TaskQuery.SortCriterion.DEADLINE)) {
         txTemplate.execute {
-            new TaskQueryImpl(em, personDataRepository, riDataRepository, rights, domain, unit).execute(paging)
+            new TaskQueryImpl(em, personDataRepository, riDataRepository, rights, domain, unit)
+                    .tap{applyFilters.accept(it)}
+                    .execute(paging)
         }
     }
 }
