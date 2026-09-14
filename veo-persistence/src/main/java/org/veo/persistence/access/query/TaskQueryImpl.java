@@ -18,6 +18,7 @@
 package org.veo.persistence.access.query;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -92,20 +93,14 @@ public class TaskQueryImpl implements TaskQuery {
   private final UserAccessRights accessRights;
   private final Domain domain;
   private final Unit unit;
+  private String username;
 
   @Override
   @Transactional(readOnly = true)
   public PagedResult<Task, SortCriterion> execute(PagingConfiguration<SortCriterion> pagingConfig) {
-    var totalResultCount = (long) taskQuery("select count(*) from t;").getSingleResult();
+    var totalResultCount = (long) taskQuery(pagingConfig, true).getSingleResult();
     var totalPages = (int) Math.ceilDiv(totalResultCount, pagingConfig.pageSize());
-    List<Object[]> resultList =
-        taskQuery(
-                "select t.type, t.assignee_id, t.deadline, t.ri_id from t\n"
-                    + order(pagingConfig.sortColumn(), pagingConfig.sortOrder())
-                    + "limit :limit offset :offset;")
-            .setParameter("limit", pagingConfig.pageSize())
-            .setParameter("offset", pagingConfig.pageNumber() * pagingConfig.pageSize())
-            .getResultList();
+    List<Object[]> resultList = taskQuery(pagingConfig, false).getResultList();
 
     var risById = getRiMap(resultList);
     var personsById = getPersonMap(resultList);
@@ -157,17 +152,35 @@ public class TaskQueryImpl implements TaskQuery {
         .collect(Collectors.toMap(Person::getId, Function.identity()));
   }
 
-  private String order(SortCriterion sortColumn, PagingConfiguration.SortOrder sortOrder) {
-    var col =
-        switch (sortColumn) {
-          case DEADLINE -> "t.deadline";
-        };
-    return "order by " + col + " " + sortOrder.getSqlKeyword() + "\n";
-  }
+  private Query taskQuery(PagingConfiguration<SortCriterion> paging, boolean countOnly) {
+    // SELECT (with mandatory filters)
+    var params =
+        new HashMap<String, Object>(
+            Map.of(
+                "unitId", unit.getId(),
+                "domainId", domain.getId()));
+    var query =
+        WITH_TASK_SUBQUERY
+            + (countOnly
+                ? "select count(*) from t\n"
+                : "select t.type, t.assignee_id, t.deadline, t.ri_id from t\n");
 
-  private Query taskQuery(String query) {
-    return em.createNativeQuery(WITH_TASK_SUBQUERY + query)
-        .setParameter("unitId", unit.getId())
-        .setParameter("domainId", domain.getId());
+    // ORDER & LIMIT
+    if (!countOnly) {
+      var orderCol =
+          switch (paging.sortColumn()) {
+            case DEADLINE -> "t.deadline";
+          };
+      params.put("limit", paging.pageSize());
+      params.put("offset", paging.pageNumber() * paging.pageSize());
+      query +=
+          "order by %s %s limit :limit offset :offset"
+              .formatted(orderCol, paging.sortOrder().getSqlKeyword());
+    }
+
+    // EXECUTE
+    var queryObj = em.createNativeQuery(query);
+    params.forEach(queryObj::setParameter);
+    return queryObj;
   }
 }
