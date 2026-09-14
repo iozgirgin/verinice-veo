@@ -51,6 +51,7 @@ public class GetTasksUseCase
       throw new NotFoundException("Unit is not associated with domain.");
     }
     var query = taskRepository.queryTasks(domain, unit, userAccessRights);
+    query.whereUsernameIs(userAccessRights.getUsername());
     return new OutputData(query.execute(input.pagingConfiguration), domain);
   }
 

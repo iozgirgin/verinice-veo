@@ -68,7 +68,8 @@ public class TaskController {
   private final UseCaseInteractor useCaseInteractor;
 
   @Operation(
-      summary = "EXPERIMENTAL API, SUBJECT TO CHANGE! Retrieve open tasks for a domain and unit")
+      summary =
+          "EXPERIMENTAL API, SUBJECT TO CHANGE! Retrieve open tasks for a domain and unit that are assigned to the authenticated user")
   @GetMapping
   @ApiResponse(responseCode = "200", description = "Tasks loaded")
   @ApiResponse(

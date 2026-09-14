@@ -82,10 +82,12 @@ class TaskControllerMockMvcITSpec extends VeoMvcSpec {
         txTemplate.execute {
             def personA = personRepository.save(newPerson(unit) {
                 name = 'person a'
+                username = "user@domain.example"
                 associateWithDomain(testDomain, "Programmer", "CODING")
             })
             def personB = personRepository.save(newPerson(unit) {
                 name = 'person b'
+                username = "boozer@domain.example"
                 associateWithDomain(testDomain, "Programmer", "CODING")
             })
             def controlA = controlRepository.save(newControl(unit) {
@@ -112,6 +114,7 @@ class TaskControllerMockMvcITSpec extends VeoMvcSpec {
                     status = ImplementationStatus.YES
                     implementationUntil = LocalDate.parse("2027-01-02")
                     nextRevisionDate = LocalDate.parse("2028-01-02")
+                    nextRevisionBy = personA
                 }
             })
             processDataRepository.save(newProcess(unit) {
@@ -121,6 +124,12 @@ class TaskControllerMockMvcITSpec extends VeoMvcSpec {
                 getRequirementImplementation(controlA).tap{
                     status = ImplementationStatus.NO
                     implementationUntil = LocalDate.parse("2027-02-01")
+                    responsible = personA
+                }
+                implementControl(controlB)
+                getRequirementImplementation(controlB).tap{
+                    status = ImplementationStatus.NO
+                    implementationUntil = LocalDate.parse("2027-02-02")
                     responsible = personB
                 }
             })
@@ -147,13 +156,13 @@ class TaskControllerMockMvcITSpec extends VeoMvcSpec {
                 type == "requirement-implementation"
                 requirementImplementation.origin.name == "little help"
                 requirementImplementation.control.name == "control a"
-                assignee.name == "person b"
+                assignee.name == "person a"
             }
             with(items[2]) {
                 type == "requirement-implementation-revision"
                 requirementImplementation.origin.name == "big machine"
                 requirementImplementation.control.name == "control b"
-                assignee == null
+                assignee.name == "person a"
             }
         }
     }
@@ -168,6 +177,11 @@ class TaskControllerMockMvcITSpec extends VeoMvcSpec {
             otherClientsDomain = createTestDomain(otherClient, TEST_DOMAIN_TEMPLATE_ID, TemplateItems.NONE)
             otherClientsUnit = unitRepository.save(newUnit(otherClient))
 
+            def otherClientsPerson = personRepository.save(newPerson(otherClientsUnit) {
+                name = 'person'
+                username = "user@domain.example" // Our own username in the other client!
+                associateWithDomain(otherClientsDomain, "Nerd", "NerdingOut")
+            })
             def otherClientsControl = controlRepository.save(newControl(otherClientsUnit) {
                 name = 'control'
                 associateWithDomain(otherClientsDomain, "TOM", "NEW")
@@ -176,6 +190,9 @@ class TaskControllerMockMvcITSpec extends VeoMvcSpec {
                 name = "asset"
                 associateWithDomain(otherClientsDomain, "Server", "NEW")
                 implementControl(otherClientsControl)
+                getRequirementImplementation(otherClientsControl).tap{
+                    responsible = otherClientsPerson
+                }
             })
         }
 

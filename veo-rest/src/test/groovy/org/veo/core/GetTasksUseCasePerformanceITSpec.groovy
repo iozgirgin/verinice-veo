@@ -69,24 +69,28 @@ class GetTasksUseCasePerformanceITSpec extends AbstractPerformanceITSpec {
             def responsibles = (0..<riCount).collect { i ->
                 personDataRepository.save(newPerson(unit) {
                     name = "responsible $i"
+                    username = "System"
                     associateWithDomain(domain, "Programmer", "CODING")
                 })
             }
             def implementers = (0..<riCount).collect { i ->
                 personDataRepository.save(newPerson(unit) {
                     name = "implementer $i"
+                    username = "System"
                     associateWithDomain(domain, "Programmer", "CODING")
                 })
             }
             def lastRevisionists = (0..<riCount).collect { i ->
                 personDataRepository.save(newPerson(unit) {
                     name = "last revisionist $i"
+                    username = "System"
                     associateWithDomain(domain, "Programmer", "CODING")
                 })
             }
             def nextRevisionists = (0..<riCount).collect { i ->
                 personDataRepository.save(newPerson(unit) {
                     name = "next revisionist $i"
+                    username = "System"
                     associateWithDomain(domain, "Programmer", "CODING")
                 })
             }
