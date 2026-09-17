@@ -474,8 +474,9 @@ public class ProcessInDomainController
 
   @Operation(summary = "Returns domain-specific process JSON schema")
   @Override
-  public @Valid CompletableFuture<ResponseEntity<String>> getJsonSchema(UUID domainId) {
-    return elementService.getJsonSchema(domainId, ElementType.PROCESS);
+  public @Valid CompletableFuture<ResponseEntity<String>> getJsonSchema(
+      UUID domainId, WebRequest request) {
+    return elementService.getJsonSchema(domainId, ElementType.PROCESS, request);
   }
 
   @Operation(summary = "Loads available domain-specific actions for a process")

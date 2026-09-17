@@ -19,7 +19,10 @@ package org.veo.rest
 
 import static java.util.UUID.randomUUID
 
+import java.time.Instant
+
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpHeaders
 import org.springframework.security.test.context.support.WithUserDetails
 
 import org.veo.core.VeoMvcSpec
@@ -236,5 +239,28 @@ class IncidentInDomainControllerMockMvcITSpec extends VeoMvcSpec {
         then:
         def nfEx = thrown(NotFoundException)
         nfEx.message == "domain $randomDomainId not found"
+    }
+
+    def "JSON schema is cachable"() {
+        when:
+        def results = get("/domains/$testDomainId/incidents/json-schema")
+        String eTag = getETag(results)
+
+        then:
+        eTag != null
+
+        and:
+        get("/domains/$testDomainId/incidents/json-schema", [(HttpHeaders.IF_NONE_MATCH): eTag], 304)
+
+        when:
+        executeInTransaction {
+            domainDataRepository.findById(UUID.fromString(testDomainId)).get().tap {
+                it.updatedAt = Instant.now()
+            }
+        }
+        results = get("/domains/$testDomainId/incidents/json-schema")
+
+        then:
+        getETag(results) != eTag
     }
 }

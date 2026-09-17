@@ -463,8 +463,9 @@ public class ScopeInDomainController
 
   @Operation(summary = "Returns domain-specific scope JSON schema")
   @Override
-  public @Valid CompletableFuture<ResponseEntity<String>> getJsonSchema(UUID domainId) {
-    return elementService.getJsonSchema(domainId, ElementType.SCOPE);
+  public @Valid CompletableFuture<ResponseEntity<String>> getJsonSchema(
+      UUID domainId, WebRequest request) {
+    return elementService.getJsonSchema(domainId, ElementType.SCOPE, request);
   }
 
   @Operation(summary = "Loads available domain-specific actions for a scope")

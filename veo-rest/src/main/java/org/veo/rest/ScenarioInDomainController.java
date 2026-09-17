@@ -461,8 +461,9 @@ public class ScenarioInDomainController implements ElementInDomainResource {
 
   @Operation(summary = "Returns domain-specific scenario JSON schema")
   @Override
-  public @Valid CompletableFuture<ResponseEntity<String>> getJsonSchema(UUID domainId) {
-    return elementService.getJsonSchema(domainId, ElementType.SCENARIO);
+  public @Valid CompletableFuture<ResponseEntity<String>> getJsonSchema(
+      UUID domainId, WebRequest request) {
+    return elementService.getJsonSchema(domainId, ElementType.SCENARIO, request);
   }
 
   @GetMapping("/{scenarioId}/relations")

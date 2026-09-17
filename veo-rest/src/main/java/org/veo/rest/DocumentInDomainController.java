@@ -462,8 +462,9 @@ public class DocumentInDomainController implements ElementInDomainResource {
 
   @Operation(summary = "Returns domain-specific document JSON schema")
   @Override
-  public @Valid CompletableFuture<ResponseEntity<String>> getJsonSchema(UUID domainId) {
-    return elementService.getJsonSchema(domainId, ElementType.DOCUMENT);
+  public @Valid CompletableFuture<ResponseEntity<String>> getJsonSchema(
+      UUID domainId, WebRequest request) {
+    return elementService.getJsonSchema(domainId, ElementType.DOCUMENT, request);
   }
 
   @GetMapping("/{documentId}/relations")

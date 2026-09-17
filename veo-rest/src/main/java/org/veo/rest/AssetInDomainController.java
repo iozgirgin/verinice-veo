@@ -472,8 +472,9 @@ public class AssetInDomainController
 
   @Operation(summary = "Returns domain-specific asset JSON schema")
   @Override
-  public @Valid CompletableFuture<ResponseEntity<String>> getJsonSchema(UUID domainId) {
-    return elementService.getJsonSchema(domainId, ElementType.ASSET);
+  public @Valid CompletableFuture<ResponseEntity<String>> getJsonSchema(
+      UUID domainId, WebRequest request) {
+    return elementService.getJsonSchema(domainId, ElementType.ASSET, request);
   }
 
   @Operation(summary = "Loads available domain-specific actions for an asset")

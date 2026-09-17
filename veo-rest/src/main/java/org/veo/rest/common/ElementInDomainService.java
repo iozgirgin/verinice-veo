@@ -251,7 +251,10 @@ public class ElementInDomainService {
   }
 
   public CompletableFuture<ResponseEntity<String>> getJsonSchema(
-      UUID domainId, ElementType elementType) {
+      UUID domainId, ElementType elementType, WebRequest request) {
+    if (etagService.getEtag(Domain.class, domainId).map(request::checkNotModified).orElse(false)) {
+      return null;
+    }
     var clientId = userAccessRightsProvider.getAccessRights().getClientId();
     return CompletableFuture.supplyAsync(
         () -> {
