@@ -18,8 +18,8 @@
 package org.veo.adapter.persistence.schema;
 
 import java.util.Locale;
-import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import org.veo.adapter.presenter.api.dto.TranslationsDto;
 import org.veo.core.entity.Domain;
@@ -65,24 +65,22 @@ public class EntitySchemaServiceImpl implements EntitySchemaService {
                 (language, entriesForLanguage) -> {
                   if (isRequested(requestedLanguages, language)) {
                     log.debug("Adding translations for {}", language);
-                    entriesForLanguage
-                        .entrySet()
-                        .forEach(
-                            e -> {
-                              Optional<String> previousMapping =
-                                  translations.get(language, e.getKey());
-                              if (previousMapping
-                                  .map(it -> !it.equals(e.getValue()))
-                                  .orElse(false)) {
-                                log.warn(
-                                    "Found conflicting translations for {} in client {}: '{}' vs. '{}' from {}",
-                                    e.getKey(),
-                                    domain.getOwner().getIdAsString(),
-                                    previousMapping.get(),
-                                    e.getValue(),
-                                    domain.getName());
-                              }
-                            });
+                    if (domains.size() > 1) {
+                      entriesForLanguage.forEach(
+                          (key, value) ->
+                              translations
+                                  .get(language, key)
+                                  .filter(Predicate.not(value::equals))
+                                  .ifPresent(
+                                      previousMapping ->
+                                          log.warn(
+                                              "Found conflicting translations for {} in client {}: '{}' vs. '{}' from {}",
+                                              key,
+                                              domain.getOwner().getIdAsString(),
+                                              previousMapping,
+                                              value,
+                                              domain.getName())));
+                    }
                     translations.add(language, entriesForLanguage);
                   }
                 });
