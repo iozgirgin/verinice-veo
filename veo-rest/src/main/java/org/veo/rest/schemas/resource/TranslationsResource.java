@@ -18,6 +18,7 @@
 package org.veo.rest.schemas.resource;
 
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 import org.springframework.http.MediaType;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.WebRequest;
 
 import org.veo.adapter.presenter.api.dto.TranslationsDto;
 
@@ -77,12 +79,8 @@ public interface TranslationsResource {
           Set<String> languages,
       @Parameter(
               required = false,
-              description = "The domain id whose translations are to be included.",
-              example = "15f58e45-48b7-409e-a32f-48d208aac5d5",
-              schema =
-                  @Schema(
-                      type = "string",
-                      description = "must be a valid UUID string following RFC 4122"))
+              description = "The domain id whose translations are to be included.")
           @RequestParam(value = "domain", required = false)
-          String domainId);
+          UUID domainId,
+      WebRequest request);
 }

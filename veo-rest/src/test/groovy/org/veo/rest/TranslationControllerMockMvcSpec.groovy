@@ -17,6 +17,9 @@
  */
 package org.veo.rest
 
+import java.time.Instant
+
+import org.springframework.http.HttpHeaders
 import org.springframework.security.test.context.support.WithUserDetails
 
 import org.veo.core.VeoMvcSpec
@@ -118,7 +121,7 @@ class TranslationControllerMockMvcSpec extends VeoMvcSpec {
         createTestClient()
 
         expect:
-        get("/translations?domain=123&languages=de,en", 404)
+        get("/translations?domain=${UUID.randomUUID()}&languages=de,en", 404)
     }
 
     @WithUserDetails("user@domain.example")
@@ -181,5 +184,49 @@ class TranslationControllerMockMvcSpec extends VeoMvcSpec {
 
         then: "no translations are returned"
         thrown(ClientNotActiveException)
+    }
+
+    @WithUserDetails("user@domain.example")
+    def "translations for single domains are cacheable"() {
+        given:
+        def client = createTestClient()
+        def domain1 =
+                createTestDomain(client, DSGVO_DOMAINTEMPLATE_UUID)
+
+        when:
+        def results = get("/translations?domain=${domain1.idAsString}&languages=de,en")
+        def eTag = getETag(results)
+
+        then:
+        eTag != null
+
+        and:
+        get("/translations?domain=${domain1.idAsString}&languages=de,en", [(HttpHeaders.IF_NONE_MATCH): eTag], 304)
+
+        when:
+        executeInTransaction {
+            domainDataRepository.findById(domain1.id).get().tap {
+                it.updatedAt = Instant.now()
+            }
+        }
+        results = get("/translations?domain=${domain1.idAsString}&languages=de,en")
+
+        then:
+        getETag(results) != eTag
+    }
+
+    @WithUserDetails("user@domain.example")
+    def "translations for multiple domains are not cacheable"() {
+        given:
+        def client = createTestClient()
+        createTestDomain(client, DSGVO_DOMAINTEMPLATE_UUID)
+        createTestDomain(client, DSGVO_DOMAINTEMPLATE_UUID)
+
+        when:
+        def results = get("/translations?languages=de,en")
+        def eTag = getETag(results)
+
+        then:
+        eTag == null
     }
 }

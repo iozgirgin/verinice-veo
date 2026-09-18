@@ -27,6 +27,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.WebRequest;
 
 import org.veo.adapter.presenter.api.dto.TranslationsDto;
 import org.veo.core.Translations;
@@ -39,6 +40,7 @@ import org.veo.rest.VeoMessage;
 import org.veo.rest.common.ClientNotActiveException;
 import org.veo.rest.schemas.resource.TranslationsResource;
 import org.veo.rest.security.ApplicationUser;
+import org.veo.service.EtagService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -53,9 +55,18 @@ public class TranslationController implements TranslationsResource {
 
   private final MessageSource messageSource;
 
+  private final EtagService etagService;
+
   @Override
   public CompletableFuture<ResponseEntity<TranslationsDto>> getSchema(
-      Authentication auth, Set<String> languages, String domainId) {
+      Authentication auth, Set<String> languages, UUID domainId, WebRequest request) {
+    if (domainId != null
+        && etagService
+            .getEtag(Domain.class, domainId)
+            .map(request::checkNotModified)
+            .orElse(false)) {
+      return null;
+    }
     ApplicationUser user = ApplicationUser.authenticatedUser(auth.getPrincipal());
     Client client = getClient(user.getClientId());
     var locales = languages.stream().map(Locale::forLanguageTag).collect(Collectors.toSet());
@@ -66,7 +77,7 @@ public class TranslationController implements TranslationsResource {
           if (domainId != null) {
             domains =
                 domains.stream()
-                    .filter(it -> it.getIdAsString().equals(domainId))
+                    .filter(it -> it.getId().equals(domainId))
                     .collect(Collectors.toSet());
             if (domains.isEmpty()) {
               return ResponseEntity.notFound().build();
