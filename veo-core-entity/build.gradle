@@ -14,6 +14,7 @@ testing {
     suites {
         test {
             dependencies {
+                implementation 'org.apache.groovy:groovy-json'
                 implementation 'jakarta.validation:jakarta.validation-api'
                 implementation 'org.hibernate.validator:hibernate-validator'
                 implementation 'org.springframework.boot:spring-boot-starter-test'

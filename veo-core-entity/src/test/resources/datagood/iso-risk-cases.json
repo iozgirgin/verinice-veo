@@ -1,0 +1,299 @@
+{
+  "fixtureVersion": "1.0.0",
+  "riskDefinition": "ISORA",
+  "probabilities": [
+    "Rare",
+    "Medium",
+    "Frequent",
+    "Very frequent"
+  ],
+  "impacts": [
+    "Negligible",
+    "Limited",
+    "Considerable",
+    "Existential"
+  ],
+  "riskLabels": [
+    "Low",
+    "Medium",
+    "High",
+    "Very high"
+  ],
+  "matrix": [
+    [
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      1,
+      2
+    ],
+    [
+      1,
+      1,
+      2,
+      3
+    ],
+    [
+      1,
+      2,
+      3,
+      3
+    ]
+  ],
+  "cases": [
+    {
+      "caseId": "ISO-MATRIX-0-0",
+      "probability": "Rare",
+      "impacts": {
+        "C": "Negligible",
+        "I": "Negligible",
+        "A": "Negligible"
+      },
+      "expectedInherent": {
+        "C": "Low",
+        "I": "Low",
+        "A": "Low"
+      }
+    },
+    {
+      "caseId": "ISO-MATRIX-0-1",
+      "probability": "Medium",
+      "impacts": {
+        "C": "Negligible",
+        "I": "Negligible",
+        "A": "Negligible"
+      },
+      "expectedInherent": {
+        "C": "Low",
+        "I": "Low",
+        "A": "Low"
+      }
+    },
+    {
+      "caseId": "ISO-MATRIX-0-2",
+      "probability": "Frequent",
+      "impacts": {
+        "C": "Negligible",
+        "I": "Negligible",
+        "A": "Negligible"
+      },
+      "expectedInherent": {
+        "C": "Low",
+        "I": "Low",
+        "A": "Low"
+      }
+    },
+    {
+      "caseId": "ISO-MATRIX-0-3",
+      "probability": "Very frequent",
+      "impacts": {
+        "C": "Negligible",
+        "I": "Negligible",
+        "A": "Negligible"
+      },
+      "expectedInherent": {
+        "C": "Low",
+        "I": "Low",
+        "A": "Low"
+      }
+    },
+    {
+      "caseId": "ISO-MATRIX-1-0",
+      "probability": "Rare",
+      "impacts": {
+        "C": "Limited",
+        "I": "Limited",
+        "A": "Limited"
+      },
+      "expectedInherent": {
+        "C": "Low",
+        "I": "Low",
+        "A": "Low"
+      }
+    },
+    {
+      "caseId": "ISO-MATRIX-1-1",
+      "probability": "Medium",
+      "impacts": {
+        "C": "Limited",
+        "I": "Limited",
+        "A": "Limited"
+      },
+      "expectedInherent": {
+        "C": "Low",
+        "I": "Low",
+        "A": "Low"
+      }
+    },
+    {
+      "caseId": "ISO-MATRIX-1-2",
+      "probability": "Frequent",
+      "impacts": {
+        "C": "Limited",
+        "I": "Limited",
+        "A": "Limited"
+      },
+      "expectedInherent": {
+        "C": "Medium",
+        "I": "Medium",
+        "A": "Medium"
+      }
+    },
+    {
+      "caseId": "ISO-MATRIX-1-3",
+      "probability": "Very frequent",
+      "impacts": {
+        "C": "Limited",
+        "I": "Limited",
+        "A": "Limited"
+      },
+      "expectedInherent": {
+        "C": "High",
+        "I": "High",
+        "A": "High"
+      }
+    },
+    {
+      "caseId": "ISO-MATRIX-2-0",
+      "probability": "Rare",
+      "impacts": {
+        "C": "Considerable",
+        "I": "Considerable",
+        "A": "Considerable"
+      },
+      "expectedInherent": {
+        "C": "Medium",
+        "I": "Medium",
+        "A": "Medium"
+      }
+    },
+    {
+      "caseId": "ISO-MATRIX-2-1",
+      "probability": "Medium",
+      "impacts": {
+        "C": "Considerable",
+        "I": "Considerable",
+        "A": "Considerable"
+      },
+      "expectedInherent": {
+        "C": "Medium",
+        "I": "Medium",
+        "A": "Medium"
+      }
+    },
+    {
+      "caseId": "ISO-MATRIX-2-2",
+      "probability": "Frequent",
+      "impacts": {
+        "C": "Considerable",
+        "I": "Considerable",
+        "A": "Considerable"
+      },
+      "expectedInherent": {
+        "C": "High",
+        "I": "High",
+        "A": "High"
+      }
+    },
+    {
+      "caseId": "ISO-MATRIX-2-3",
+      "probability": "Very frequent",
+      "impacts": {
+        "C": "Considerable",
+        "I": "Considerable",
+        "A": "Considerable"
+      },
+      "expectedInherent": {
+        "C": "Very high",
+        "I": "Very high",
+        "A": "Very high"
+      }
+    },
+    {
+      "caseId": "ISO-MATRIX-3-0",
+      "probability": "Rare",
+      "impacts": {
+        "C": "Existential",
+        "I": "Existential",
+        "A": "Existential"
+      },
+      "expectedInherent": {
+        "C": "Medium",
+        "I": "Medium",
+        "A": "Medium"
+      }
+    },
+    {
+      "caseId": "ISO-MATRIX-3-1",
+      "probability": "Medium",
+      "impacts": {
+        "C": "Existential",
+        "I": "Existential",
+        "A": "Existential"
+      },
+      "expectedInherent": {
+        "C": "High",
+        "I": "High",
+        "A": "High"
+      }
+    },
+    {
+      "caseId": "ISO-MATRIX-3-2",
+      "probability": "Frequent",
+      "impacts": {
+        "C": "Existential",
+        "I": "Existential",
+        "A": "Existential"
+      },
+      "expectedInherent": {
+        "C": "Very high",
+        "I": "Very high",
+        "A": "Very high"
+      }
+    },
+    {
+      "caseId": "ISO-MATRIX-3-3",
+      "probability": "Very frequent",
+      "impacts": {
+        "C": "Existential",
+        "I": "Existential",
+        "A": "Existential"
+      },
+      "expectedInherent": {
+        "C": "Very high",
+        "I": "Very high",
+        "A": "Very high"
+      }
+    },
+    {
+      "caseId": "ISO-MIXED-01",
+      "probability": "Frequent",
+      "impacts": {
+        "C": "Negligible",
+        "I": "Limited",
+        "A": "Existential"
+      },
+      "expectedInherent": {
+        "C": "Low",
+        "I": "Medium",
+        "A": "Very high"
+      },
+      "treatment": {
+        "A": "risk reduction"
+      },
+      "userResidual": {
+        "A": "Medium"
+      },
+      "expectedResidual": {
+        "C": "Low",
+        "I": "Medium",
+        "A": "Medium"
+      }
+    }
+  ]
+}
