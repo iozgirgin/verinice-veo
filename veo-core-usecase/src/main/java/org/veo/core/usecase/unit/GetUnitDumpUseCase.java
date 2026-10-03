@@ -54,10 +54,8 @@ public class GetUnitDumpUseCase
 
   @Override
   public OutputData execute(InputData input, UserAccessRights userAccessRights) {
-    var unit =
-        accountProvider.getCurrentUserAccount().isAdmin()
-            ? unitRepository.getById(input.unitId)
-            : unitRepository.getById(input.unitId, userAccessRights);
+    // Administrator privileges do not cross client or unit-access boundaries.
+    var unit = unitRepository.getById(input.unitId, userAccessRights);
     var client = accountProvider.getCurrentUserAccount().getClient();
     return new OutputData(
         unit,
